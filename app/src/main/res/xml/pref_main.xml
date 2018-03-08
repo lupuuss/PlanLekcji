@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent">
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="@string/is_page_based"
+        android:title="@string/page_based_title"
+        android:summary="@string/page_based_summary"/>
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="@string/is_mark_lesson"
+        android:title="@string/mark_lesson_title"
+        android:summary="@string/mark_lesson_summary"/>
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="@string/show_last_update_footer"
+        android:title="@string/show_last_update_footer_title"
+        android:summary="@string/show_last_update_footer_summary"/>
+    <Preference
+        android:key="@string/version_pref"
+        android:summary=""
+        android:title="@string/title_version" />
+
+</PreferenceScreen>

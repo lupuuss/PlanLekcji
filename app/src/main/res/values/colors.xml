@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- mode indicator -->
+
+    <color name="onlineGreen">#64dd17</color>
+    <color name="noNetRed">#d50000</color>
+    <color name="offlineGray">#9e9e9e</color>
+
+    <!-- THEME COLORS -->
+
+    <color name="colorPrimary">#3b4e62</color>
+    <color name="colorPrimaryTransp">#6e3b4e62</color>
+    <color name="colorPrimaryDark">#1e2832</color>
+    <color name="colorAccent">#FFF</color>
+    <color name="colorFont">#FFF</color>
+    <color name="colorPrimaryDarker1">#151c24</color>
+    <color name="colorPrimaryDarker2">#0d1116</color>
+    <color name="colorPrimaryDarker0">#1a232b</color>
+    <color name="colorFontSecond">#546e8c</color>
+    <color name="colorCurrentLesson">#131a1f</color>
+    <color name="colorTextSecondary">#dadada</color>
+    <color name="colorLessonOnClick">#263340</color>
+
+</resources>

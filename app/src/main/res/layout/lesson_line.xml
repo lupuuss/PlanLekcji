@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lesson_line"
+    android:layout_width="220dp"
+    android:layout_height="wrap_content"
+    android:textSize="13sp"
+    android:layout_marginBottom="2dp"
+    android:textAlignment="textEnd"
+    android:layout_gravity="end"
+    android:gravity="end"
+    />

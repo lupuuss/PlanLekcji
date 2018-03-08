@@ -1,0 +1,64 @@
+<resources>
+    <string name="app_name">Plan lekcji</string>
+    <string name="save_switch_save">Zapisz</string>
+    <string name="refresh">Odśwież</string>
+    <string name="default_opt">Ustaw jako domyślny</string>
+    <string name="report_out_off_date">Zgłoś nieaktualny plan</string>
+    <string name="update_app">Aktualizuj aplikację</string>
+    <string name="settings_opt">Ustawienia</string>
+    <string name="drawer_open">Otwórz menu</string>
+    <string name="drawer_close">Zamknij menu</string>
+    <string name="msg_json_error">Dane otrzymane od serwera nie mogły zostać przetworzone. Spróbuj ponownie późńiej.</string>
+    <string name="msg_timeout_error">Przekroczono czas oczekiwania na odpowiedź serwera. Spróbuj ponownie.</string>
+    <string name="msg_server_error">Błąd serwera. Spróbuj ponownie później.</string>
+    <string name="msg_server_resources_error">Serwer nie mógł spełnić żądania. Spróbuj ponownie później.</string>
+    <string name="msg_something_goes_wrong">Coś poszło nie tak. Spróbuj ponownie.</string>
+    <string name="msg_no_internet">Brak połączenia z internetem. Dane nie mogą zostać pobrane.</string>
+    <string name="msg_fail_screen">Coś poszło nie tak…</string>
+    <string name="save_switch_delete">Usuń</string>
+    <string name="no_more_lessons">Brak lekcji na dziś!</string>
+    <string name="lists_loading">Ładowanie list…</string>
+    <string name="msg_no_timetable_to_save">Brak planu do zapisania.</string>
+    <string name="msg_can_not_save_timetable">Nie udało się zapisać pliku.</string>
+    <string name="msg_no_timetable_to_delete">Brak planu do usunięcia.</string>
+    <string name="load_offline">Wczytaj z telefonu</string>
+    <string name="msg_no_basic_data">Nie udało się załadować podstawowych danych.</string>
+    <string name="no_timetable_loaded">Żaden plan nie jest załadowany!</string>
+    <string name="already_default">Plan \"%s\" jest już domyślny!</string>
+    <string name="now_is_default">Plan \"%s\" jest od teraz domyślny!</string>
+    <string name="report_error">Nie udało się zgłosić. Spróbuj ponownie później.</string>
+    <string name="report_ok_but_up_to_date">Plan jest zgodny z danymi na stronie szkoły lub został przekroczony czasowy limit zgłoszeń. Spróbuj ponownie później.</string>
+    <string name="report_ok">Plan został zaktualizowany!</string>
+    <string name="report">Zgłoszenie</string>
+    <string name="report_warning">Nieaktualny plan należy zgłosić, gdy nie jest on zgodny z danymi na stronie szkoły.\n\nCzy na pewno chcesz dokonać zgłoszenia?</string>
+    <string name="app_up_to_data">Aplikacja jest aktualna!</string>
+    <string name="update">Aktualizacja</string>
+    <string name="update_found">Dostępna jest nowa wersja aplikacji. Czy chcesz ją zainstalować?</string>
+    <string name="changelog">Lista zmian</string>
+    <string name="info">Informacja</string>
+    <string name="update_in_progress">Aktualizacja trwa…</string>
+
+    <!-- preferences -->
+
+    <string name="is_mark_lesson">is_mark_lesson</string>
+    <string name="mark_lesson_title">Wskazuj obecną lekcję</string>
+    <string name="mark_lesson_summary">Aplikacja wskazuje obecnie odbywającą się lekcję.</string>
+
+    <string name="action_settings">Ustawienia</string>
+    <string name="title_activity_settings">Ustawienia</string>
+
+    <string name="title_version">Wersja</string>
+
+    <string name="is_page_based">is_page_based</string>
+    <string name="page_based_summary">Aplikacja otwiera odpowiedni dzień tygodnia w oparciu o obecną datę.</string>
+    <string name="page_based_title">Otwieraj plan zależnie od daty</string>
+
+    <string name="version_pref">version_pref</string>
+    <string name="last_update_text">Ostatnia aktualizacja: %s</string>
+    <string name="share">Udostępnij</string>
+    <string name="share_app_title">Udostępnij plan lekcji!</string>
+    <string name="show_last_update_footer">show_last_update_footer</string>
+    <string name="show_last_update_footer_title">Pokaż informacje o ostatniej aktualizacji</string>
+    <string name="show_last_update_footer_summary">Aplikacja wyświetla datę ostatniej aktualizacji danego planu lekcji.</string>
+
+</resources>

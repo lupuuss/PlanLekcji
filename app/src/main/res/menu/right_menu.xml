@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="@string/default_opt" android:onClick="setCurrentAsDefaultOnClick"/>
+    <item android:title="@string/report_out_off_date" android:onClick="reportOutOfDateOnClick"/>
+    <item android:title="@string/update_app" android:onClick="checkForUpdateOnClick" />
+    <item android:title="@string/settings_opt" android:onClick="goToSettings" />
+
+</menu>

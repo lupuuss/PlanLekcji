@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_fragment_linear"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.astuetz.PagerSlidingTabStrip
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        app:pstsShouldExpand="true"
+        app:pstsTextAllCaps="true"
+        app:pstsDividerColor="@color/colorAccent"
+        app:pstsIndicatorColor="@color/colorAccent"
+        app:pstsTabPaddingLeftRight="14dp"
+        app:pstsUnderlineColor="@color/colorAccent"
+        app:pstsUnderlineHeight="2dp"
+        app:pstsTabBackground="@drawable/tab_back"
+        android:layout_height="48dp"
+        android:layout_gravity="top"
+        android:textSize="14sp"
+        android:background="@color/colorPrimaryDark"
+        android:animateLayoutChanges="true"/>
+
+    <android.support.v4.view.ViewPager
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="top"
+        android:textSize="14sp"
+        android:layout_weight="1"
+        android:animateLayoutChanges="true">
+    </android.support.v4.view.ViewPager>
+
+    <FrameLayout
+        android:id="@+id/layout_footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/footer_back"
+        android:padding="3dp">
+
+        <TextView
+            android:id="@+id/last_update"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@android:color/white"/>
+    </FrameLayout>
+
+</LinearLayout>

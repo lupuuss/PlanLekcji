@@ -1,12 +1,13 @@
 package ga.lupuss.planlekcji.presenters.timetablepresenter;
 
+import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.util.Log;
-import android.widget.Toast;
 
 import ga.lupuss.planlekcji.exceptions.UserMessageException;
 import ga.lupuss.planlekcji.managers.timetablemanager.Timetable;
 import ga.lupuss.planlekcji.managers.timetablemanager.TimetableType;
+import ga.lupuss.planlekcji.ui.activities.MainActivity;
 import ga.lupuss.planlekcji.ui.adapters.BasicExpandableListAdapter;
 import ga.lupuss.planlekcji.ui.fragments.LoadingFragment;
 
@@ -20,7 +21,7 @@ class DataUpdater extends ControlledAsyncTask {
     final private int BAD = 0;
     private String message;
 
-    DataUpdater(TimetablePresenter controlPresenter) {
+    DataUpdater(@NonNull TimetablePresenter controlPresenter) {
 
         super(controlPresenter);
     }
@@ -41,9 +42,12 @@ class DataUpdater extends ControlledAsyncTask {
 
         mainActivity.addLoadingFragmentAndKeepTimetableOnBackStack(isOffline,
                 LoadingFragment.Owner.TIMETABLE);
+
+        mainActivity.setModeIndicatorByInternetConnection();
     }
 
     @Override
+    @NonNull
     protected Integer doInBackground(Void... voids) {
 
         Log.i(DataUpdater.class.getName(), "data update...");
@@ -87,6 +91,8 @@ class DataUpdater extends ControlledAsyncTask {
 
         if (integer == OK) {
 
+            Log.i(DataUpdater.class.getName(), "> > > All fine");
+
             mainActivity.setExpandableListViewAdapter(
                     new BasicExpandableListAdapter(
                             mainActivity,
@@ -97,12 +103,13 @@ class DataUpdater extends ControlledAsyncTask {
 
             mainActivity.unlockSaveSwitch();
             mainActivity.addTimetableFragmentSmooth(timetable, true);
-
-            Log.i(DataUpdater.class.getName(), "> > > All fine");
+            mainActivity.setModeIndicator(MainActivity.IndicatorMode.NET);
 
         } else {
 
             if (integer == ONLY_LISTS) {
+
+                Log.i(DataUpdater.class.getName(), "> > > Only lists fine");
 
                 mainActivity.setExpandableListViewAdapter(
                         new BasicExpandableListAdapter(
@@ -111,13 +118,12 @@ class DataUpdater extends ControlledAsyncTask {
                                 timetableManager.getExpandableListChildren(false)
                         )
                 );
-
-                Log.i(DataUpdater.class.getName(), "> > > Only lists fine");
             }
 
             Log.i(DataUpdater.class.getName(), "> > > failed");
             mainActivity.addFailTimetableLoadingFragment();
-            Toast.makeText(mainActivity, message, Toast.LENGTH_LONG).show();
+            mainActivity.makeSingleLongToast(message);
+            mainActivity.setModeIndicator(MainActivity.IndicatorMode.NO_NET);
 
         }
 

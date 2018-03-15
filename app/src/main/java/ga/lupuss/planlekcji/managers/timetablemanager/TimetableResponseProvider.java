@@ -1,5 +1,7 @@
 package ga.lupuss.planlekcji.managers.timetablemanager;
 
+import android.support.annotation.NonNull;
+
 import java.util.List;
 
 import ga.lupuss.simplehttp.Response;
@@ -9,8 +11,8 @@ public interface TimetableResponseProvider {
 
     String HOURS_PATH = "hours";
 
-    Response getTimetable(String slug, TimetableType type);
+    @NonNull Response getTimetable(@NonNull String slug, @NonNull TimetableType type);
 
-    List<Response> getAllLists();
+    @NonNull List<Response> getAllLists();
 
 }

@@ -1,9 +1,9 @@
 package ga.lupuss.planlekcji.presenters.timetablepresenter;
 
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.widget.Toast;
 
 import ga.lupuss.planlekcji.R;
 import ga.lupuss.planlekcji.managers.timetablemanager.TimetableManager;
@@ -19,13 +19,14 @@ final class OfflineTimetableSaver extends AsyncTask<Void, Void, Integer> {
     private boolean timetableExist = false;
 
     private final int NO_TT_TO_SAVE = 0;
+    @SuppressWarnings("FieldCanBeLocal")
     private final int CAN_NOT_SAVE = 1;
     private final int OK = 2;
 
     private final MainActivity mainActivity;
     private final TimetableManager timetableManager;
 
-    OfflineTimetableSaver(TimetablePresenter timetablePresenter) {
+    OfflineTimetableSaver(@NonNull TimetablePresenter timetablePresenter) {
 
         this.mainActivity = timetablePresenter.getMainActivity();
         this.timetableManager = timetablePresenter.getTimetableManager();
@@ -50,6 +51,7 @@ final class OfflineTimetableSaver extends AsyncTask<Void, Void, Integer> {
         super.onPreExecute();
     }
 
+    @NonNull
     @Override
     protected Integer doInBackground(Void... voids) {
 
@@ -81,11 +83,7 @@ final class OfflineTimetableSaver extends AsyncTask<Void, Void, Integer> {
                 msg = mainActivity.getString(R.string.msg_can_not_save_timetable);
             }
 
-            Toast.makeText(
-                    mainActivity,
-                    msg,
-                    Toast.LENGTH_LONG
-            ).show();
+            mainActivity.makeSingleLongToast(msg);
 
             mainActivity.setSaveSwitchCheckedWithoutEvent(false);
         }

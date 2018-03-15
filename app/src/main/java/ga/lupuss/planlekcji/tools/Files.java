@@ -1,5 +1,7 @@
 package ga.lupuss.planlekcji.tools;
 
+import android.support.annotation.NonNull;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -12,7 +14,7 @@ import ga.lupuss.simplehttp.SimpleHttp;
 
 public class Files {
 
-    public static byte[] readAllBytes(File file) throws IOException {
+    public static byte[] readAllBytes(@NonNull File file) throws IOException {
 
         BufferedInputStream in = null;
 
@@ -52,7 +54,7 @@ public class Files {
 
     }
 
-    public static void writeAllBytes(File file, byte[] bytes) throws IOException {
+    public static void writeAllBytes(@NonNull File file, byte[] bytes) throws IOException {
 
         BufferedOutputStream out = null;
 
@@ -78,7 +80,7 @@ public class Files {
         }
     }
 
-    public static boolean fileOnServerExists(String url) {
+    public static boolean fileOnServerExists(@NonNull String url) {
 
         return SimpleHttp.head(url)
                 .timeouts(5000, 5000)

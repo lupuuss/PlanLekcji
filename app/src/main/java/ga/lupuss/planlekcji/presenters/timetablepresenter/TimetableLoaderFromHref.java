@@ -1,11 +1,12 @@
 package ga.lupuss.planlekcji.presenters.timetablepresenter;
 
+import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.util.Log;
-import android.widget.Toast;
 
 import ga.lupuss.planlekcji.exceptions.UserMessageException;
 import ga.lupuss.planlekcji.managers.timetablemanager.TimetableType;
+import ga.lupuss.planlekcji.ui.activities.MainActivity;
 import ga.lupuss.planlekcji.ui.adapters.BasicExpandableListAdapter;
 import ga.lupuss.planlekcji.ui.fragments.LoadingFragment;
 
@@ -13,7 +14,9 @@ final class TimetableLoaderFromHref extends TimetableLoader {
 
     final private int OK_ONLINE_LISTS = 3;
 
-    TimetableLoaderFromHref(TimetablePresenter controlPresenter, String listName, TimetableType type) {
+    TimetableLoaderFromHref(@NonNull TimetablePresenter controlPresenter,
+                            @NonNull String listName,
+                            @NonNull TimetableType type) {
 
         super(controlPresenter, listName, type);
     }
@@ -38,6 +41,7 @@ final class TimetableLoaderFromHref extends TimetableLoader {
 
     }
 
+    @NonNull
     @Override
     protected Integer doInBackground(Void... voids) {
 
@@ -118,8 +122,9 @@ final class TimetableLoaderFromHref extends TimetableLoader {
 
         } else {
 
+            mainActivity.setModeIndicator(MainActivity.IndicatorMode.NO_NET);
             mainActivity.addFailTimetableLoadingFragment();
-            Toast.makeText(mainActivity, message, Toast.LENGTH_LONG).show();
+            mainActivity.makeSingleLongToast(message);
             Log.i(TimetableLoaderFromHref.class.getName(), logLine() + "> Failed");
         }
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
 import android.util.Log;
 
@@ -60,9 +61,9 @@ public final class TimetableManager {
     private TimetableStats stats = new TimetableStats();
 
 
-    public TimetableManager(Context appContext,
-                            TimetableResponseProvider responseProvider,
-                            OfflineTimetableProvider offlineTimetableProvider) {
+    public TimetableManager(@NonNull Context appContext,
+                            @NonNull TimetableResponseProvider responseProvider,
+                            @NonNull OfflineTimetableProvider offlineTimetableProvider) {
 
         this.appContext = appContext;
         this.responseProvider = responseProvider;
@@ -97,11 +98,13 @@ public final class TimetableManager {
 
     // FOR EXPANDABLE LIST VIEW LISTS
 
+    @NonNull
     public List<String> getExpandableListHeaders() {
 
         return headersList;
     }
 
+    @NonNull
     public Map<String, List<String>> getExpandableListChildren(boolean needSort) {
 
         assert classes != null;
@@ -150,7 +153,8 @@ public final class TimetableManager {
         return map;
     }
 
-    private List<String> addDashIfEmpty(List<String> list) {
+    @NonNull
+    private List<String> addDashIfEmpty(@NonNull List<String> list) {
 
         if (list.isEmpty()) {
 
@@ -171,9 +175,10 @@ public final class TimetableManager {
      * @return All lessons views for all days
      * @throws UserMessageException when timetable can't be reached
      */
-    public Timetable getTimetable(String listName,
-                                  TimetableType type,
-                                  Principal principal,
+    @NonNull
+    public Timetable getTimetable(@NonNull String listName,
+                                  @NonNull TimetableType type,
+                                  @NonNull Principal principal,
                                   boolean internetStatus) throws UserMessageException {
 
         setLastFocusedTimetable(new Pair<>(listName, type));
@@ -202,9 +207,10 @@ public final class TimetableManager {
         return timetable;
     }
 
-    public Timetable getOfflineTimetable(String listName,
-                                         TimetableType type,
-                                         Principal principal) throws UserMessageException {
+    @NonNull
+    public Timetable getOfflineTimetable(@NonNull String listName,
+                                         @NonNull TimetableType type,
+                                         @NonNull Principal principal) throws UserMessageException {
 
         setLastFocusedTimetable(new Pair<>(listName, type));
 
@@ -220,10 +226,10 @@ public final class TimetableManager {
                 appContext.getString(R.string.msg_something_goes_wrong)
         );
     }
-
-    public Timetable getOnlineTimetable(String listName,
-                                        TimetableType type,
-                                        Principal principal,
+    @NonNull
+    public Timetable getOnlineTimetable(@NonNull String listName,
+                                        @NonNull TimetableType type,
+                                        @NonNull Principal principal,
                                         boolean internetStatus) throws UserMessageException {
 
         setLastFocusedTimetable(new Pair<>(listName, type));
@@ -251,11 +257,10 @@ public final class TimetableManager {
         return new Timetable(
                 slug,
                 json,
-                offlineTimetablesProvider.containsTimetable(slug, type),
                 false
         );
     }
-
+    @NonNull
     public Pair<String, TimetableType> pickAutoTimetable() throws UserMessageException {
 
         if(isLastFocusedTimetableAvailable()) {
@@ -269,7 +274,6 @@ public final class TimetableManager {
         } else {
 
             return getFirstTimetableFromLists();
-
         }
     }
 
@@ -304,7 +308,7 @@ public final class TimetableManager {
         return lastFocusedTimetable != null;
     }
 
-    public void setLastFocusedTimetable(Pair<String, TimetableType> lastFocusedTimetable) {
+    public void setLastFocusedTimetable(@NonNull Pair<String, TimetableType> lastFocusedTimetable) {
 
         this.lastFocusedTimetable = lastFocusedTimetable;
     }
@@ -374,6 +378,7 @@ public final class TimetableManager {
     // DEFAULT TIMETABLE
 
     public Pair<String, TimetableType> getDefaultTimetable() {
+
         return defaultTimetable;
     }
 
@@ -382,7 +387,7 @@ public final class TimetableManager {
         return defaultTimetable != null;
     }
 
-    public void setDefaultTimetable(String listName, TimetableType type) {
+    public void setDefaultTimetable(@NonNull String listName, @NonNull TimetableType type) {
 
         defaultTimetable = new Pair<>(listName, type);
 
@@ -504,7 +509,9 @@ public final class TimetableManager {
     }
 
     @SuppressWarnings("Convert2streamapi")
-    private void verifyStatsFor(List<String> online, List<String> offline, TimetableType type) {
+    private void verifyStatsFor(@NonNull List<String> online,
+                                @NonNull List<String> offline,
+                                @NonNull TimetableType type) {
 
         List<String> toDelete = new ArrayList<>();
 
@@ -542,13 +549,15 @@ public final class TimetableManager {
             offlineTimetablesProvider.refreshLists();
 
         } else {
-            Log.d(TimetableManager.class.getName(), "Verifying revoked - nothing to verifyOfflineDataFor");
+            Log.d(TimetableManager.class.getName(), "Verifying revoked - nothing to verify");
         }
 
     }
 
     @SuppressWarnings("Convert2streamapi")
-    private void verifyOfflineDataFor(List<String> online, List<String> offline, TimetableType type) {
+    private void verifyOfflineDataFor(@NonNull List<String> online,
+                                      @NonNull List<String> offline,
+                                      @NonNull TimetableType type) {
 
         for (String offlineSlug : offline) {
 
@@ -569,7 +578,7 @@ public final class TimetableManager {
                 && classrooms != null;
     }
 
-    private void parseResponsesToLists(List<Response> responses) throws UserMessageException, JSONException {
+    private void parseResponsesToLists(@NonNull List<Response> responses) throws UserMessageException, JSONException {
 
 
         List<String> classesList =
@@ -603,7 +612,7 @@ public final class TimetableManager {
 
     // LISTS BACKUP
 
-    public void backUpLists(Bundle savedInstanceState) {
+    public void backUpLists(@NonNull Bundle savedInstanceState) {
 
         if (areListsOK()) {
 
@@ -630,7 +639,7 @@ public final class TimetableManager {
 
     }
 
-    public void restoreLists(Bundle savedInstanceState) {
+    public void restoreLists(@NonNull Bundle savedInstanceState) {
 
         List<String> clsList = savedInstanceState.getStringArrayList(Bundles.CLASSES);
         List<String> clsrmsList = savedInstanceState.getStringArrayList(Bundles.CLASSROOMS);
@@ -706,13 +715,14 @@ public final class TimetableManager {
         }
     }
 
-    public boolean keepTimetableOffline(String listName, TimetableType type, String json) {
+    public boolean keepTimetableOffline(@NonNull String listName,
+                                        @NonNull TimetableType type,
+                                        @NonNull String json) {
 
-        return offlineTimetablesProvider
-                .keepTimetableOffline(getSlugForListName(listName, type), type, json);
+        return offlineTimetablesProvider.keepTimetableOffline(getSlugForListName(listName, type), type, json);
     }
 
-    public void deleteOfflineTimetable(String listName, TimetableType type) {
+    public void deleteOfflineTimetable(@NonNull String listName, @NonNull TimetableType type) {
 
         offlineTimetablesProvider.deleteTimetable(getSlugForListName(listName, type), type);
     }
@@ -724,7 +734,7 @@ public final class TimetableManager {
         stats.load();
     }
 
-    public void setOnStatsLeaderChanged(Runnable runnable) {
+    public void setOnStatsLeaderChanged(@Nullable Runnable runnable) {
 
         stats.setOnLeaderChangedListener(runnable);
     }

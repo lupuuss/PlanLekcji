@@ -8,7 +8,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
-import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -127,15 +126,11 @@ public class AppUpdatePresenter {
 
                 if (integer == APP_UP_TO_DATA) {
 
-                    Toast.makeText(
-                            mainActivity,
-                            mainActivity.getString(R.string.app_up_to_data),
-                            Toast.LENGTH_LONG
-                    ).show();
+                    mainActivity.makeSingleLongToastByStringId(R.string.app_up_to_data);
 
                 } else if(integer == FAIL){
 
-                    Toast.makeText(mainActivity, message, Toast.LENGTH_LONG).show();
+                    mainActivity.makeSingleLongToast(message);
                 }
 
             }
@@ -223,7 +218,7 @@ public class AppUpdatePresenter {
             super.onPostExecute(aBoolean);
 
             mainActivity.getUpdateProgressBar().setVisibility(View.INVISIBLE);
-            mainActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
+            mainActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 
             changelogManager.save(
                     appCheckInHandler.getApiChangeLog(),
@@ -240,7 +235,7 @@ public class AppUpdatePresenter {
         @Override
         protected void onCancelled() {
 
-            mainActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
+            mainActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
             super.onCancelled();
             updateProcess = false;
         }

@@ -1,5 +1,6 @@
 package ga.lupuss.planlekcji.onlineoptions;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -17,7 +18,8 @@ public class ReportOutOfDataCallback {
 
     private String phoneID;
 
-    public ReportOutOfDataCallback(String phoneID) {
+    public ReportOutOfDataCallback(@NonNull String phoneID) {
+
         this.phoneID = phoneID;
     }
 

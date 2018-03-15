@@ -1,5 +1,6 @@
 package ga.lupuss.planlekcji.tools;
 
+import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
 
 import java.io.File;
@@ -9,6 +10,7 @@ import ga.lupuss.planlekcji.managers.timetablemanager.TimetableType;
 
 public class OldConfig {
 
+    @Nullable
     public static Pair<String, TimetableType> readDefaultTimetable() {
 
             String data;

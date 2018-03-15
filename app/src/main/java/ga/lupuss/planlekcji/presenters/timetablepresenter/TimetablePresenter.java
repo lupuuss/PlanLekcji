@@ -2,10 +2,11 @@ package ga.lupuss.planlekcji.presenters.timetablepresenter;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,7 @@ public final class TimetablePresenter {
 
     private MainActivity mainActivity;
 
-    public TimetablePresenter(MainActivity activity) {
+    public TimetablePresenter(@NonNull MainActivity activity) {
 
         this.mainActivity = activity;
         this.timetableManager = new TimetableManager(
@@ -47,13 +48,13 @@ public final class TimetablePresenter {
         timetableManager.loadStats();
     }
 
-    public void backUpState(Bundle savedInstanceState) {
+    public void backUpState(@NonNull Bundle savedInstanceState) {
 
         timetableManager.backUpLists(savedInstanceState);
         timetableManager.backUpLastFocusedTimetable(savedInstanceState);
     }
 
-    public boolean restoreState(Bundle savedInstanceState) {
+    public boolean restoreState(@NonNull Bundle savedInstanceState) {
 
         boolean restore = restoreExpandableListView(savedInstanceState);
         timetableManager.restoreLastFocusedTimetable(savedInstanceState);
@@ -61,7 +62,7 @@ public final class TimetablePresenter {
         return restore;
     }
 
-    private boolean restoreExpandableListView(Bundle savedInstanceState) {
+    private boolean restoreExpandableListView(@NonNull Bundle savedInstanceState) {
 
         timetableManager.restoreLists(savedInstanceState);
 
@@ -84,7 +85,7 @@ public final class TimetablePresenter {
 
     }
 
-    private void runControlledAsyncTask(ControlledAsyncTask task) {
+    private void runControlledAsyncTask(@NonNull ControlledAsyncTask task) {
 
         if (mainAsyncTask != null && mainAsyncTask.isRunning()) {
 
@@ -95,7 +96,7 @@ public final class TimetablePresenter {
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    public void appInit(LoadMode mode) {
+    public void appInit(@NonNull LoadMode mode) {
 
         runControlledAsyncTask(
                 new AppInitializer(this, mode)
@@ -103,38 +104,38 @@ public final class TimetablePresenter {
 
     }
 
-    public void loadTimetable(String listName, TimetableType type,
-                              LoadMode mode, Principal principal) {
+    public void loadTimetable(@NonNull String listName,
+                              @NonNull TimetableType type,
+                              @NonNull LoadMode mode,
+                              @NonNull Principal principal) {
 
         runControlledAsyncTask(new BasicTimetableLoader(this, listName, type, mode, principal));
     }
 
-    public void loadAutoTimetable(LoadMode mode) {
+    public void loadAutoTimetable(@NonNull LoadMode mode) {
 
         try {
 
             Pair<String, TimetableType> autoTimetable = timetableManager.pickAutoTimetable();
 
-            if (autoTimetable != null) {
+            loadTimetable(
+                    autoTimetable.first,
+                    autoTimetable.second,
+                    mode,
+                    Principal.APP
+            );
 
-                loadTimetable(
-                        autoTimetable.first,
-                        autoTimetable.second,
-                        mode,
-                        Principal.APP
-                );
-            }
         } catch (UserMessageException e) {
 
             mainActivity.runOnUiThread(
-                    () -> Toast.makeText(mainActivity, e.getUserMessage(), Toast.LENGTH_LONG).show()
+                    () -> mainActivity.makeSingleLongToast(e.getUserMessage())
             );
 
         }
     }
 
 
-    public void loadTimetableFromHref(String listName, TimetableType type) {
+    public void loadTimetableFromHref(@NonNull String listName, @NonNull TimetableType type) {
 
         runControlledAsyncTask(new TimetableLoaderFromHref(this, listName, type));
     }
@@ -150,12 +151,7 @@ public final class TimetablePresenter {
             mainActivity.runOnUiThread(
                     () -> {
 
-                        Toast.makeText(
-                                mainActivity,
-                                mainActivity.getString(R.string.msg_no_internet),
-                                Toast.LENGTH_LONG
-                        ).show();
-
+                        mainActivity.makeSingleLongToastByStringId(R.string.msg_no_internet);
                         mainActivity.swipeRefreshLayout.setRefreshing(false);
                     }
             );
@@ -204,8 +200,8 @@ public final class TimetablePresenter {
 
         }
 
-        mainActivity.runOnUiThread(() -> Toast.makeText(
-                mainActivity, msg, Toast.LENGTH_LONG).show()
+        mainActivity.runOnUiThread(() ->
+                mainActivity.makeSingleLongToast(msg)
         );
 
     }
@@ -251,7 +247,7 @@ public final class TimetablePresenter {
         }
     }
 
-    public void setOnResumeLoad(Runnable onResumeLoad) {
+    public void setOnResumeLoad(@Nullable Runnable onResumeLoad) {
 
         this.onResumeLoad = onResumeLoad;
     }
@@ -261,7 +257,7 @@ public final class TimetablePresenter {
         onResumeLoad = null;
     }
 
-    public void setOnStatsLeaderChanged(Runnable runnable) {
+    public void setOnStatsLeaderChanged(@Nullable Runnable runnable) {
 
         timetableManager.setOnStatsLeaderChanged(runnable);
     }
@@ -306,17 +302,17 @@ public final class TimetablePresenter {
         return onResumeLoad;
     }
 
-    ThreadControl getThreadControl() {
+    @NonNull ThreadControl getThreadControl() {
 
         return control;
     }
 
-    MainActivity getMainActivity() {
+    @NonNull MainActivity getMainActivity() {
 
         return mainActivity;
     }
 
-    TimetableManager getTimetableManager() {
+    @NonNull TimetableManager getTimetableManager() {
 
         return timetableManager;
     }

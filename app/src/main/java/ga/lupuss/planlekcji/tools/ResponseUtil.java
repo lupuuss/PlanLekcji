@@ -1,6 +1,7 @@
 package ga.lupuss.planlekcji.tools;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,8 +22,9 @@ import ga.lupuss.simplehttp.Response;
 
 public class ResponseUtil {
 
-    public static JSONObject fetchResponseToJsonObject(Context appContext,
-                                                       Response response) throws UserMessageException {
+    @NonNull
+    public static JSONObject fetchResponseToJsonObject(@NonNull Context appContext,
+                                                       @NonNull Response response) throws UserMessageException {
 
         if (response.isResponseCodeOK()) {
 
@@ -42,7 +44,9 @@ public class ResponseUtil {
         }
     }
 
-    public static  JSONArray fetchResponseToJsonArray(Context appContext, Response response) throws UserMessageException {
+    @NonNull
+    public static  JSONArray fetchResponseToJsonArray(@NonNull Context appContext,
+                                                      @NonNull Response response) throws UserMessageException {
 
         if (response.isResponseCodeOK()) {
 
@@ -62,7 +66,9 @@ public class ResponseUtil {
         }
     }
 
-    private static UserMessageException fetchResponseException(Context appContext, Response response)  {
+    @NonNull
+    private static UserMessageException fetchResponseException(@NonNull Context appContext,
+                                                               @NonNull Response response)  {
 
         int code = response.getResponseCode();
 

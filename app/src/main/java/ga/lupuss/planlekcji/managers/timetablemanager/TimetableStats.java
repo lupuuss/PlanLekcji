@@ -1,5 +1,7 @@
 package ga.lupuss.planlekcji.managers.timetablemanager;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.File;
@@ -59,7 +61,7 @@ public final class TimetableStats {
         }
     }
 
-    void deleteStat(String slug, TimetableType type) {
+    void deleteStat(@NonNull String slug, @NonNull TimetableType type) {
 
         allStats.get(type).remove(slug);
         save();
@@ -95,7 +97,7 @@ public final class TimetableStats {
         }
     }
 
-    void update(String slug, TimetableType type , long byValue){
+    void update(@NonNull String slug, @NonNull TimetableType type , long byValue){
 
         Log.d(TimetableStats.class.getName(),
                 String.format("Slug: %s Type: %s stats +%d", slug, type, byValue));
@@ -195,7 +197,7 @@ public final class TimetableStats {
         }
     }
 
-    private void fetchStatString(String str ){
+    private void fetchStatString(@NonNull String str ){
 
         int eq = str.indexOf('=');
         int dolarPos = str.indexOf('$');
@@ -218,6 +220,7 @@ public final class TimetableStats {
         allStats.get(TimetableType.values()[type]).put(slug, clicks);
     }
 
+    @Nullable
     MostVisitedTimetable getMostVisitedTimetable() {
 
         return mostVisitedTimetable;

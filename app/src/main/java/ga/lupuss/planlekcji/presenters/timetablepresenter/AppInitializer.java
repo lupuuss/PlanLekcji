@@ -1,7 +1,7 @@
 package ga.lupuss.planlekcji.presenters.timetablepresenter;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
 
 import ga.lupuss.planlekcji.R;
 import ga.lupuss.planlekcji.exceptions.UserMessageException;
@@ -18,7 +18,7 @@ final class AppInitializer extends ControlledAsyncTask {
     final private int BAD = 0;
     final private LoadMode mode;
 
-    AppInitializer(TimetablePresenter controlPresenter, LoadMode mode) {
+    AppInitializer(@NonNull TimetablePresenter controlPresenter,@NonNull LoadMode mode) {
 
         super(controlPresenter);
         this.mode = mode;
@@ -34,6 +34,7 @@ final class AppInitializer extends ControlledAsyncTask {
             showOfflineButton = timetableManager.isAnyOfflineTimetable();
         }
 
+        mainActivity.setModeIndicatorByInternetConnection();
         mainActivity.addLoadingFragmentAndKeepTimetableOnBackStack(
                 showOfflineButton,
                 LoadingFragment.Owner.APP_INIT
@@ -45,6 +46,7 @@ final class AppInitializer extends ControlledAsyncTask {
                 ));
     }
 
+    @NonNull
     @Override
     protected Integer doInBackground(Void... voids) {
 
@@ -121,10 +123,9 @@ final class AppInitializer extends ControlledAsyncTask {
         } else {
 
             Log.w(AppInitializer.class.getName(), "Lists not reached");
-            Toast.makeText(mainActivity, message, Toast.LENGTH_LONG).show();
 
+            mainActivity.makeSingleLongToast(message);
             mainActivity.setModeIndicator(MainActivity.IndicatorMode.NO_NET);
-
             mainActivity.addAppInitFailScreen();
         }
 

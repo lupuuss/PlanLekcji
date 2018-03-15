@@ -1,5 +1,7 @@
 package ga.lupuss.planlekcji.managers.timetablemanager;
 
+import android.support.annotation.NonNull;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
@@ -12,7 +14,7 @@ import ga.lupuss.simplehttp.SimpleHttp;
 public final class BasicTimetableResponseProvider implements TimetableResponseProvider {
 
     @Override
-    public Response getTimetable(String slug, TimetableType type) {
+    @NonNull public Response getTimetable(@NonNull String slug, @NonNull TimetableType type) {
 
         try {
             slug = URLEncoder.encode(slug, "UTF-8").replace("+", "%20");
@@ -25,7 +27,7 @@ public final class BasicTimetableResponseProvider implements TimetableResponsePr
     }
 
     @Override
-    public List<Response> getAllLists() {
+    @NonNull public List<Response> getAllLists() {
 
         MultiRequest multiRequest = new MultiRequest(
                 true,

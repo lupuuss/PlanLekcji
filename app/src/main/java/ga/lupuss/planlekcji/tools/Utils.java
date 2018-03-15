@@ -1,6 +1,8 @@
 package ga.lupuss.planlekcji.tools;
 
 
+import android.support.annotation.NonNull;
+
 import java.text.Collator;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -12,7 +14,8 @@ import java.util.TimeZone;
 
 public class Utils {
 
-    public static String paresISO(String str) throws Exception {
+    @NonNull
+    public static String paresISO(@NonNull String str) throws Exception {
 
         int pos = str.indexOf('T');
 
@@ -44,7 +47,7 @@ public class Utils {
         return  simpleDateFormat.format(dateToPrint.getTime());
     }
 
-    public static void teachersNamesSort(List<String> names) {
+    public static void teachersNamesSort(@NonNull List<String> names) {
 
         Collections.sort(names, new Comparator<String>() {
 

@@ -1,8 +1,8 @@
 package ga.lupuss.planlekcji.presenters.timetablepresenter;
 
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.widget.Toast;
 
 import ga.lupuss.planlekcji.R;
 import ga.lupuss.planlekcji.managers.timetablemanager.TimetableManager;
@@ -19,7 +19,7 @@ final class OfflineTimetableDeleter extends AsyncTask<Void, Void, Boolean> {
     final private TimetableManager timetableManager;
 
 
-    OfflineTimetableDeleter(TimetablePresenter timetablePresenter) {
+    OfflineTimetableDeleter(@NonNull TimetablePresenter timetablePresenter) {
 
         this.mainActivity = timetablePresenter.getMainActivity();
         this.timetableManager = timetablePresenter.getTimetableManager();
@@ -43,6 +43,7 @@ final class OfflineTimetableDeleter extends AsyncTask<Void, Void, Boolean> {
         super.onPreExecute();
     }
 
+    @NonNull
     @Override
     protected Boolean doInBackground(Void... voids) {
 
@@ -61,14 +62,8 @@ final class OfflineTimetableDeleter extends AsyncTask<Void, Void, Boolean> {
 
         if (!bool) {
 
-            Toast.makeText(
-                    mainActivity,
-                    mainActivity.getString(R.string.msg_no_timetable_to_delete),
-                    Toast.LENGTH_LONG
-            ).show();
-
+            mainActivity.makeSingleLongToastByStringId(R.string.msg_no_timetable_to_delete);
             mainActivity.setSaveSwitchCheckedWithoutEvent(true);
-
         }
 
         mainActivity.unlockSaveSwitch();

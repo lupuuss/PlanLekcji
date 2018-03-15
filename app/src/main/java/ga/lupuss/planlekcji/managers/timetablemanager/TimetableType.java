@@ -1,5 +1,6 @@
 package ga.lupuss.planlekcji.managers.timetablemanager;
 
+import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 
 public enum TimetableType {
@@ -30,13 +31,13 @@ public enum TimetableType {
     final private int id;
 
     @SafeVarargs
-    TimetableType(String apiPath,
-                  String offlinePath,
-                  String prefix,
-                  String slugName,
+    TimetableType(@NonNull String apiPath,
+                  @NonNull String offlinePath,
+                  @NonNull String prefix,
+                  @NonNull String slugName,
                   boolean name,
                   int id,
-                  Pair<String, Integer> ... fields) {
+                  @NonNull Pair<String, Integer> ... fields) {
 
         this.apiPath = apiPath;
         this.offlinePath = offlinePath;
@@ -47,23 +48,31 @@ public enum TimetableType {
         this.id = id;
     }
 
+    @NonNull
     public String getApiPath() {
+
         return apiPath;
     }
 
+    @NonNull
     public String getOfflinePath() {
+
         return offlinePath;
     }
 
+    @NonNull
     public String getPrefix() {
+
         return prefix;
     }
 
+    @NonNull
     public String getSlugName() {
 
         return slugName;
     }
 
+    @NonNull
     public Pair<String, TimetableType> getField(int i){
 
         TimetableType type = null;
@@ -81,6 +90,7 @@ public enum TimetableType {
     }
 
     public int getId() {
+
         return id;
     }
 }

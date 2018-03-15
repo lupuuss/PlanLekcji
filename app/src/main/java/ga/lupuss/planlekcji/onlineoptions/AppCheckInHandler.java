@@ -1,6 +1,8 @@
 package ga.lupuss.planlekcji.onlineoptions;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -39,7 +41,7 @@ public class AppCheckInHandler {
 
     private Context context;
 
-    public AppCheckInHandler(Context context, String version) {
+    public AppCheckInHandler(@NonNull Context context, @NonNull String version) {
         currentVersion = version;
         this.context = context;
     }
@@ -54,7 +56,7 @@ public class AppCheckInHandler {
         return !currentVersion.equals(apiVersion);
     }
 
-    private void parseJson(JSONObject json) throws UserMessageException {
+    private void parseJson(@NonNull JSONObject json) throws UserMessageException {
 
         try {
 
@@ -79,23 +81,38 @@ public class AppCheckInHandler {
         }
     }
 
+    @NonNull
     public String getApiVersion() {
+
+        checkNull(apiVersion);
+
         return apiVersion;
     }
 
+    @NonNull
     public String getApiMessage() {
+
+        checkNull(apiMessage);
         return apiMessage;
     }
 
+    @NonNull
     public List<String> getApiChangeLog() {
+
+        checkNull(apiChangeLog);
         return apiChangeLog;
     }
 
+    @NonNull
     public String getApiApkUrl() {
+
+        checkNull(apiApkUrl);
         return apiApkUrl;
     }
 
-    public void sendIdentity(String mostVisitedSlug, String mostVisitedSlugType, String androidID) {
+    public void sendIdentity(@NonNull String mostVisitedSlug,
+                             @NonNull String mostVisitedSlugType,
+                             @NonNull String androidID) {
 
         try {
 
@@ -131,5 +148,13 @@ public class AppCheckInHandler {
             e.printStackTrace();
         }
 
+    }
+
+    private <T> void checkNull(@Nullable T mayBeNull) {
+
+        if(mayBeNull == null) {
+
+            throw new IllegalStateException("Getter used before checkForUpdate() method");
+        }
     }
 }

@@ -1,6 +1,7 @@
 package ga.lupuss.planlekcji.tools;
 
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -10,7 +11,7 @@ public final class AntiSpam {
 
     private Map<String, Long> antiSpamStats = new TreeMap<>();
 
-    public final boolean isFunctionAvailable(String name, long limit){
+    public final boolean isFunctionAvailable(@NonNull String name, long limit){
 
         Long elapsed = SystemClock.elapsedRealtime();
 

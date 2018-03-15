@@ -1,5 +1,7 @@
 package ga.lupuss.planlekcji.presenters.timetablepresenter;
 
+import android.support.annotation.NonNull;
+
 import ga.lupuss.planlekcji.managers.timetablemanager.Timetable;
 import ga.lupuss.planlekcji.managers.timetablemanager.TimetableType;
 
@@ -14,7 +16,9 @@ abstract class TimetableLoader extends ControlledAsyncTask  {
     final  int OK_OFFLINE = 1;
     final int BAD = 0;
 
-    TimetableLoader(TimetablePresenter timetablePresenter, String listName, TimetableType type) {
+    TimetableLoader(@NonNull TimetablePresenter timetablePresenter,
+                    @NonNull  String listName,
+                    @NonNull  TimetableType type) {
 
         super(timetablePresenter);
         this.listName = listName;

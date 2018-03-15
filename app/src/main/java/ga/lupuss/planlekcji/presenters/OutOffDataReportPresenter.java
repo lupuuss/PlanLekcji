@@ -1,7 +1,7 @@
 package ga.lupuss.planlekcji.presenters;
 
 import android.os.AsyncTask;
-import android.widget.Toast;
+import android.support.annotation.NonNull;
 
 import ga.lupuss.planlekcji.R;
 import ga.lupuss.planlekcji.onlineoptions.ReportOutOfDataCallback;
@@ -11,7 +11,7 @@ public class OutOffDataReportPresenter {
 
     final private MainActivity mainActivity;
 
-    public OutOffDataReportPresenter(MainActivity mainActivity) {
+    public OutOffDataReportPresenter(@NonNull MainActivity mainActivity) {
 
         this.mainActivity = mainActivity;
     }
@@ -30,27 +30,14 @@ public class OutOffDataReportPresenter {
 
             if (integer == 200){
 
-                Toast.makeText(
-                        mainActivity,
-                        mainActivity.getString(R.string.report_ok),
-                        Toast.LENGTH_LONG
-                ).show();
+                mainActivity.makeSingleLongToastByStringId(R.string.report_ok);
 
             } else if (integer == 403) {
 
-                Toast.makeText(
-                        mainActivity,
-                        mainActivity.getString(R.string.report_ok_but_up_to_date),
-                        Toast.LENGTH_LONG
-                ).show();
-
+                mainActivity.makeSingleLongToastByStringId(R.string.report_ok_but_up_to_date);
             } else {
 
-                Toast.makeText(
-                        mainActivity,
-                        mainActivity.getString(R.string.report_error),
-                        Toast.LENGTH_LONG
-                ).show();
+                mainActivity.makeSingleLongToastByStringId(R.string.report_error);
             }
         }
     }

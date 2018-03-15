@@ -1,5 +1,6 @@
 package ga.lupuss.planlekcji.managers.timetablemanager;
 
+import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 
 import java.util.Calendar;
@@ -13,11 +14,12 @@ public final class TimetableChooser {
 
     private final Pair<Integer, Integer> WEEKEND = new Pair<>(0, -1);
 
-    public TimetableChooser(List<Pair<String, String>> hours) {
+    public TimetableChooser(@NonNull List<Pair<String, String>> hours) {
 
         this.hours = TimeInt.createHoursList(hours);
     }
 
+    @NonNull
     public Pair<Integer, Integer> pick(List<Integer> lessonsCountForEachDay) {
 
         if (lessonsCountForEachDay.size() < 5) throw new AssertionError();
@@ -71,7 +73,9 @@ public final class TimetableChooser {
         }
     }
 
+    @NonNull
     private TimeInt getLastHourEnd(int day, List<Integer> lessonsCountForEachDay) {
+
         return hours.get(lessonsCountForEachDay.get(day) - 1).second;
     }
 
@@ -85,7 +89,7 @@ public final class TimetableChooser {
             return day - 2;
     }
 
-    private boolean anyHour(int day, List<Integer> lessonsCountForEachDay) {
+    private boolean anyHour(int day, @NonNull List<Integer> lessonsCountForEachDay) {
 
         return lessonsCountForEachDay.get(day) != -1;
     }
@@ -95,7 +99,7 @@ public final class TimetableChooser {
         return day > 4;
     }
 
-    private int getNearestLesson(TimeInt currentTime){
+    private int getNearestLesson(@NonNull TimeInt currentTime){
 
         int hourTime;
         int betweenNowAndStart;

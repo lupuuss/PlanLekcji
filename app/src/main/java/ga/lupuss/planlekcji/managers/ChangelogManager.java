@@ -2,6 +2,7 @@ package ga.lupuss.planlekcji.managers;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,7 +26,7 @@ public class ChangelogManager {
     private List<String> changeLog = new ArrayList<>();
     private String changelogVersion;
 
-    public void save(List<String> changeLog, String version) {
+    public void save(@NonNull List<String> changeLog,@NonNull  String version) {
 
         File path = new File(Info.APP_FILES_DIR, CHANGELOG_FILENAME);
         File versionFile = new File(Info.APP_FILES_DIR, CHANGELOG_VERSION_FILENAME);
@@ -86,7 +87,7 @@ public class ChangelogManager {
 
     }
 
-    public void showIfReady(Context context, LayoutInflater inflater) {
+    public void showIfReady(@NonNull Context context, @NonNull LayoutInflater inflater) {
 
         if (changeLog.isEmpty() || !versionControl()) {
 
@@ -119,6 +120,7 @@ public class ChangelogManager {
         return changelogVersion.equals(BuildConfig.VERSION_NAME);
     }
 
+    @NonNull
     private String getChangelogString() {
 
         StringBuilder builder = new StringBuilder("");
@@ -132,7 +134,7 @@ public class ChangelogManager {
         return builder.toString();
     }
 
-    private void loadChangelog(File file) {
+    private void loadChangelog(@NonNull File file) {
 
         if( file.exists() ){
 

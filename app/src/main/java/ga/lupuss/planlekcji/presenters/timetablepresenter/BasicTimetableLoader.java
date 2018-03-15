@@ -1,7 +1,7 @@
 package ga.lupuss.planlekcji.presenters.timetablepresenter;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
 
 import ga.lupuss.planlekcji.exceptions.UserMessageException;
 import ga.lupuss.planlekcji.managers.timetablemanager.TimetableType;
@@ -14,11 +14,11 @@ final class BasicTimetableLoader extends TimetableLoader {
     private LoadMode mode;
     private Principal principal;
 
-    BasicTimetableLoader(TimetablePresenter controlPresenter,
-                         String listName,
-                         TimetableType type,
-                         LoadMode mode,
-                         Principal principal) {
+    BasicTimetableLoader(@NonNull TimetablePresenter controlPresenter,
+                         @NonNull String listName,
+                         @NonNull TimetableType type,
+                         @NonNull LoadMode mode,
+                         @NonNull Principal principal) {
 
         super(controlPresenter, listName, type);
         this.mode = mode;
@@ -41,8 +41,17 @@ final class BasicTimetableLoader extends TimetableLoader {
 
         } else {
 
-            mainActivity.setModeIndicatorByInternetConnection();
             showOfflineButton = timetableManager.isOfflineAvailable(listName, type);
+
+            if (showOfflineButton && !mainActivity.isOnline()) {
+
+
+                mainActivity.setModeIndicator(MainActivity.IndicatorMode.OFFLINE);
+
+            } else {
+
+                mainActivity.setModeIndicatorByInternetConnection();
+            }
         }
 
         mainActivity.addLoadingFragmentAndKeepTimetableOnBackStack(
@@ -51,6 +60,7 @@ final class BasicTimetableLoader extends TimetableLoader {
         );
     }
 
+    @NonNull
     @Override
     protected Integer doInBackground(Void... voids) {
 
@@ -126,7 +136,7 @@ final class BasicTimetableLoader extends TimetableLoader {
                     logLine() + "> Failed"
             );
 
-            Toast.makeText(mainActivity, message, Toast.LENGTH_LONG).show();
+            mainActivity.makeSingleLongToast(message);
             mainActivity.setModeIndicator(MainActivity.IndicatorMode.NO_NET);
             mainActivity.addFailTimetableLoadingFragment();
         }

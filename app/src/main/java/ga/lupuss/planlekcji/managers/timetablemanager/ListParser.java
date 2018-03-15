@@ -1,5 +1,6 @@
 package ga.lupuss.planlekcji.managers.timetablemanager;
 
+import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 
 import org.json.JSONArray;
@@ -17,7 +18,7 @@ final class ListParser {
 
     private final static boolean ignoreTags = true;
 
-    static List<Pair<String, String>> parseHoursList(JSONArray json) throws JSONException {
+    @NonNull static List<Pair<String, String>> parseHoursList(@NonNull JSONArray json) throws JSONException {
 
         List<Pair<String, String>> hours = new ArrayList<>();
 
@@ -29,7 +30,8 @@ final class ListParser {
         return hours;
     }
 
-    static  List<String> parseTimetableList(JSONArray json, TimetableType type) throws JSONException {
+    @NonNull static  List<String> parseTimetableList(@NonNull JSONArray json,
+                                                     @NonNull TimetableType type) throws JSONException {
 
         if (type.isNameAvailable()) {
             throw new IllegalArgumentException("This method is for CLASS and CLASSROOM types.");
@@ -45,7 +47,7 @@ final class ListParser {
         return list;
     }
 
-    static Map<String, String> parseTimetableListWithNames(JSONArray json) throws JSONException {
+    @NonNull static Map<String, String> parseTimetableListWithNames(@NonNull JSONArray json) throws JSONException {
 
         Map<String, String> map = new LinkedHashMap<>();
         TimetableType type = TimetableType.TEACHER;

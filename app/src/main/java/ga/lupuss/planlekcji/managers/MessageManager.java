@@ -2,6 +2,7 @@ package ga.lupuss.planlekcji.managers;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.widget.ScrollView;
@@ -34,7 +35,9 @@ public class MessageManager {
 
     }
 
-    public void showIfNew(Context context, LayoutInflater inflater, String message) {
+    public void showIfNew(@NonNull Context context,
+                          @NonNull LayoutInflater inflater,
+                          @NonNull String message) {
 
         if (!this.message.equals(message) && !message.equals("")) {
 
@@ -55,7 +58,7 @@ public class MessageManager {
         save(message);
     }
 
-    private void save(String message) {
+    private void save(@NonNull String message) {
 
         this.message = message;
 

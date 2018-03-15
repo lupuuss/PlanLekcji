@@ -1,5 +1,7 @@
 package ga.lupuss.planlekcji.managers.timetablemanager;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
 import android.util.Log;
 
@@ -69,7 +71,7 @@ public final class BasicOfflineTimetableProvider implements OfflineTimetableProv
 
             try {
 
-                hours = ListParser.parseHoursList(new JSONArray(loadHours()));
+                hours = ListParser.parseHoursList(new JSONArray(loadHoursJson()));
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -115,14 +117,14 @@ public final class BasicOfflineTimetableProvider implements OfflineTimetableProv
             }
         }
 
-        for(String slug : toDelete) {
+        for (String slug : toDelete) {
 
             teachers.remove(slug);
         }
 
     }
 
-    private void loadAllTimetables(List<File> dirs){
+    private void loadAllTimetables(@NonNull List<File> dirs){
 
         Log.d(TimetableManager.class.getName(), "Dirs exists");
 
@@ -151,12 +153,15 @@ public final class BasicOfflineTimetableProvider implements OfflineTimetableProv
         }
     }
 
-    private String readSlug(TimetableType type, JSONObject json) throws JSONException {
+    @NonNull
+    private String readSlug(@NonNull TimetableType type,
+                                     @NonNull JSONObject json) throws JSONException {
 
         return json.getString(type.getSlugName());
     }
 
-    private TimetableType pickType(File dir) throws IllegalArgumentException {
+    @NonNull
+    private TimetableType pickType(@NonNull File dir) throws IllegalArgumentException {
 
         if (dir.getName().equals(TimetableType.CLASS.getOfflinePath())) {
 
@@ -175,7 +180,8 @@ public final class BasicOfflineTimetableProvider implements OfflineTimetableProv
         }
     }
 
-    private JSONObject loadTimetableFromInternal(File file) throws JSONException, IOException {
+    @NonNull
+    private JSONObject loadTimetableFromInternal(@NonNull File file) throws JSONException, IOException {
 
         return new JSONObject(new String(Files.readAllBytes(file), "UTF-8"));
     }
@@ -193,7 +199,8 @@ public final class BasicOfflineTimetableProvider implements OfflineTimetableProv
         }
     }
 
-    private String readTeacherName(JSONObject json) {
+    @Nullable
+    private String readTeacherName(@NonNull JSONObject json) {
 
         if (json.isNull("name")) {
 
@@ -218,24 +225,35 @@ public final class BasicOfflineTimetableProvider implements OfflineTimetableProv
     // public manipulation methods
 
     @Override
-    public boolean containsTimetable(String slug, TimetableType type) {
+    public boolean containsTimetable(@NonNull String slug, @NonNull TimetableType type) {
 
         return timetables.get(type).containsKey(slug);
     }
 
     @Override
-    public OfflineTimetable getTimetable(String slug, TimetableType type) {
+    public OfflineTimetable getTimetable(@NonNull String slug, @NonNull TimetableType type) {
 
         return timetables.get(type).get(slug);
     }
 
     @Override
-    public boolean keepTimetableOffline(String slug, TimetableType type, String json) {
+    public boolean keepTimetableOffline(@NonNull String slug,
+                                        @NonNull TimetableType type,
+                                        @NonNull String json) {
 
-        File file = generateFileForOfflineTimetable(slug, type);
         try {
 
-            OfflineTimetable timetable = new OfflineTimetable(slug, new JSONObject(json), file);
+            OfflineTimetable timetable;
+
+            if (timetables.get(type).containsKey(slug)) {
+
+                timetable = timetables.get(type).get(slug);
+
+            } else {
+
+                File file = generateFileForOfflineTimetable(slug, type);
+                timetable =  new OfflineTimetable(slug, new JSONObject(json), file);
+            }
 
             timetable.saveToInternal();
 
@@ -244,7 +262,7 @@ public final class BasicOfflineTimetableProvider implements OfflineTimetableProv
             Log.d(
                     BasicOfflineTimetableProvider.class.getName(),
                     "Timetable (slug: " + slug + " type: " + type.name()
-                            + ") saved to" + file.toString()
+                            + ") saved to" + timetable.getFile().toString()
             );
 
             return true;
@@ -258,7 +276,9 @@ public final class BasicOfflineTimetableProvider implements OfflineTimetableProv
     }
 
     @Override
-    public void updateOfflineTimetable(String slug, TimetableType type, JSONObject json) {
+    public void updateOfflineTimetable(@NonNull String slug,
+                                       @NonNull TimetableType type,
+                                       @NonNull JSONObject json) {
 
         OfflineTimetable timetable = getTimetable(slug, type);
 
@@ -268,28 +288,36 @@ public final class BasicOfflineTimetableProvider implements OfflineTimetableProv
         }
     }
 
-    private File generateFileForOfflineTimetable(String slug, TimetableType type) {
+    @NonNull
+    private File generateFileForOfflineTimetable(@NonNull String slug, @NonNull TimetableType type) {
 
         File typeDir = new File(TIMETABLE_DIR, type.getOfflinePath());
 
         return new File(typeDir, slug + "_" + (++timetablesCounter));
     }
 
-    private void addToList(String slug, TimetableType type, OfflineTimetable timetable) {
+    private void addToList(@NonNull String slug,
+                           @NonNull TimetableType type,
+                           @NonNull OfflineTimetable timetable) {
 
         timetables.get(type).put(slug, timetable);
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
-    public void deleteTimetable(String slug, TimetableType type) {
+    public void deleteTimetable(@NonNull String slug, @NonNull TimetableType type) {
 
-        getTimetable(slug, type).deleteFromInternal();
+        OfflineTimetable timetable = getTimetable(slug, type);
+
+        if (timetable != null) {
+
+            timetable.deleteFromInternal();
+        }
         timetables.get(type).remove(slug);
     }
 
     @Override
-    public boolean saveHours(String json)  {
+    public boolean saveHours(@NonNull String json)  {
 
         try {
 
@@ -304,7 +332,8 @@ public final class BasicOfflineTimetableProvider implements OfflineTimetableProv
     }
 
     @Override
-    public String loadHours() {
+    @Nullable
+    public String loadHoursJson() {
 
         try {
             return new String(
@@ -322,24 +351,28 @@ public final class BasicOfflineTimetableProvider implements OfflineTimetableProv
     // offline lists getters
 
     @Override
+    @NonNull
     public List<Pair<String, String>> getHours() {
 
         return hours;
     }
 
     @Override
+    @NonNull
     public List<String> getClassrooms() {
 
         return classrooms;
     }
 
     @Override
+    @NonNull
     public List<String> getClasses() {
 
         return classes;
     }
 
     @Override
+    @NonNull
     public Map<String, String> getTeachers() {
 
         return teachers;

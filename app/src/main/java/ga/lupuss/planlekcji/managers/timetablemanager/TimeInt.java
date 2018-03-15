@@ -1,5 +1,6 @@
 package ga.lupuss.planlekcji.managers.timetablemanager;
 
+import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ final class TimeInt {
     private int hour;
     private int minutes;
 
-    private TimeInt(String time){
+    private TimeInt(@NonNull String time){
 
         if( !time.equals("") ) {
             setTimeInt( time );
@@ -24,7 +25,8 @@ final class TimeInt {
     }
 
     @SuppressWarnings("Convert2streamapi")
-    static List<Pair<TimeInt, TimeInt>> createHoursList(List<Pair<String, String>> hours){
+    @NonNull
+    static List<Pair<TimeInt, TimeInt>> createHoursList(@NonNull List<Pair<String, String>> hours){
 
         ArrayList< Pair< TimeInt, TimeInt > > hoursInts = new ArrayList<>();
 
@@ -38,7 +40,7 @@ final class TimeInt {
         return hoursInts;
     }
 
-    private void setTimeInt(String time){
+    private void setTimeInt(@NonNull String time){
         int dDot = time.indexOf(':');
 
         String hour = time.substring(0, dDot);

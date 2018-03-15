@@ -1,5 +1,6 @@
 package ga.lupuss.planlekcji.ui.builders;
 
+import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,9 +24,9 @@ public final class TimetableViewsCreator {
     private OnTimetableItemClick onTimetableItemClick;
 
 
-    public TimetableViewsCreator(LayoutInflater inflater,
+    public TimetableViewsCreator(@NonNull LayoutInflater inflater,
                           ViewGroup parent,
-                          List<Pair<String, String>> hours,
+                          @NonNull List<Pair<String, String>> hours,
                           OnTimetableItemClick onTimetableItemClick){
 
         this.inflater = inflater;
@@ -34,7 +35,7 @@ public final class TimetableViewsCreator {
         this.onTimetableItemClick = onTimetableItemClick;
     }
 
-    public List<View> create(JSONArray timetableDayArray, TimetableType type) {
+    public List<View> create(@NonNull JSONArray timetableDayArray, @NonNull TimetableType type) {
 
         if (timetableDayArray.length() == 0) {
 
@@ -74,7 +75,7 @@ public final class TimetableViewsCreator {
                 .build();
     }
 
-    private View filledLesson(JSONArray lessonArray, TimetableType type, int number) {
+    private View filledLesson(@NonNull JSONArray lessonArray, @NonNull TimetableType type, int number) {
 
         try {
 
@@ -135,11 +136,11 @@ public final class TimetableViewsCreator {
         }
     }
 
-    private void fetchLessonPart(TimetableType type,
-                                   JSONObject jsonObject,
-                                   int fieldID,
-                                   StringBuilder lessonLine,
-                                   List<Pair<TimetableType, String>> lessonsLinks) throws JSONException {
+    private void fetchLessonPart(@NonNull TimetableType type,
+                                 @NonNull JSONObject jsonObject,
+                                 int fieldID,
+                                 @NonNull StringBuilder lessonLine,
+                                 @NonNull List<Pair<TimetableType, String>> lessonsLinks) throws JSONException {
 
         String slugOrName = pickValueForField(type, jsonObject, fieldID);
         lessonLine.append(slugOrName);
@@ -147,12 +148,12 @@ public final class TimetableViewsCreator {
 
     }
 
-    private String pickValueForField(TimetableType type, JSONObject jsonObject, int fieldID) throws JSONException {
+    private String pickValueForField(@NonNull TimetableType type, @NonNull JSONObject jsonObject, int fieldID) throws JSONException {
 
         return jsonObject.getString(type.getField(fieldID).first);
     }
 
-    private TimetableType pickTypeForField(TimetableType type, int fieldID) {
+    private TimetableType pickTypeForField(@NonNull TimetableType type, int fieldID) {
 
         return type.getField(fieldID).second;
     }

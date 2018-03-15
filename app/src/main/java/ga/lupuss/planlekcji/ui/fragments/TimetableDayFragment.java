@@ -2,6 +2,7 @@ package ga.lupuss.planlekcji.ui.fragments;
 
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -44,7 +45,7 @@ public final class TimetableDayFragment extends Fragment {
 
     }
 
-    final void initFieldsBasedOnBundle(Bundle savedInstanceState){
+    final void initFieldsBasedOnBundle(@Nullable Bundle savedInstanceState){
 
         if (savedInstanceState != null) {
 
@@ -69,8 +70,8 @@ public final class TimetableDayFragment extends Fragment {
         }
     }
 
-    @Nullable
     @Override
+    @Nullable
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
         NestedScrollView scrollView =
@@ -79,9 +80,10 @@ public final class TimetableDayFragment extends Fragment {
         LinearLayout layout = scrollView.findViewById(R.id.lessons_container);
 
         List<View> viewList = new TimetableViewsCreator(
-                inflater, layout, getHoursFromMainActivity(),
+                inflater,
+                layout,
+                getHoursFromMainActivity(),
                 getTimetableLoaderMethodReferenceFromMainActivity()
-
         ).create(jsonArray, type);
 
         for (View v : viewList) {
@@ -92,6 +94,7 @@ public final class TimetableDayFragment extends Fragment {
         return scrollView;
     }
 
+    @NonNull
     private OnTimetableItemClick getTimetableLoaderMethodReferenceFromMainActivity() {
 
         return (type1, slug) -> (

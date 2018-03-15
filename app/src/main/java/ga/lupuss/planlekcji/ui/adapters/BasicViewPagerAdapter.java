@@ -1,6 +1,7 @@
 package ga.lupuss.planlekcji.ui.adapters;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -16,10 +17,12 @@ import ga.lupuss.planlekcji.ui.fragments.TimetableDayFragment;
 public final class BasicViewPagerAdapter extends FragmentStatePagerAdapter {
 
     private String[] DAYS = {"pon", "wt", "śr", "czw", "pt"};
-    private JSONArray timetable = new JSONArray();
+    private JSONArray timetables = new JSONArray();
     private TimetableType type;
 
-    public BasicViewPagerAdapter(FragmentManager fm, JSONObject json, TimetableType type) {
+    public BasicViewPagerAdapter(@NonNull FragmentManager fm,
+                                 @NonNull JSONObject timetablesJson,
+                                 @NonNull TimetableType type) {
 
         super(fm);
 
@@ -27,7 +30,7 @@ public final class BasicViewPagerAdapter extends FragmentStatePagerAdapter {
 
         try {
 
-            timetable = json.getJSONArray("timetable");
+            timetables = timetablesJson.getJSONArray("timetable");
 
         } catch (JSONException e) {
 
@@ -47,7 +50,7 @@ public final class BasicViewPagerAdapter extends FragmentStatePagerAdapter {
 
             bundle.putString(
                     Bundles.TIMETABLE_DAY_JSON,
-                    timetable.getJSONArray(position).toString()
+                    timetables.getJSONArray(position).toString()
             );
             bundle.putString(
                     Bundles.TYPE,
@@ -73,6 +76,7 @@ public final class BasicViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
+
         return DAYS[position];
     }
 }

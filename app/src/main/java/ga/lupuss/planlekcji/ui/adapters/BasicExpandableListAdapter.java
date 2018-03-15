@@ -3,6 +3,7 @@ package ga.lupuss.planlekcji.ui.adapters;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,14 +25,17 @@ public final class BasicExpandableListAdapter extends BaseExpandableListAdapter 
 
     private Context context;
 
-    public BasicExpandableListAdapter(Context context, List<String> listDataHeader, Map<String, List<String>> listDataChild) {
+    public BasicExpandableListAdapter(@NonNull Context context,
+                                      @NonNull List<String> listDataHeader,
+                                      @NonNull Map<String, List<String>> listDataChild) {
 
         this.listDataHeader = listDataHeader;
         this.listDataChild = listDataChild;
         this.context = context;
     }
 
-    public static BasicExpandableListAdapter empty(Context context, List<String> listDataHeader) {
+    public static BasicExpandableListAdapter empty(@NonNull Context context,
+                                                   @NonNull List<String> listDataHeader) {
 
         Map<String, List<String>> map = new HashMap<>();
 
@@ -45,6 +49,7 @@ public final class BasicExpandableListAdapter extends BaseExpandableListAdapter 
 
     @Override
     public int getGroupCount() {
+
         return listDataHeader.size();
     }
 

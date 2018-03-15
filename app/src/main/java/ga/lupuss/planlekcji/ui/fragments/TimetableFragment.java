@@ -3,6 +3,7 @@ package ga.lupuss.planlekcji.ui.fragments;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
@@ -57,7 +58,7 @@ public final class TimetableFragment extends Fragment {
         initFieldsBasedOnBundle(savedInstanceState);
     }
 
-    final void initFieldsBasedOnBundle(Bundle savedInstanceState) {
+    final void initFieldsBasedOnBundle(@Nullable Bundle savedInstanceState) {
 
         if (savedInstanceState != null) {
 
@@ -127,7 +128,7 @@ public final class TimetableFragment extends Fragment {
 
             String dateStr = Utils.paresISO(json.getString("update"));
 
-            if (dateStr == null || dateStr.isEmpty()) {
+            if (dateStr.isEmpty()) {
 
                 return false;
 
@@ -151,7 +152,7 @@ public final class TimetableFragment extends Fragment {
         }
     }
 
-    private List<Integer> lessonsCount(JSONObject js) {
+    private List<Integer> lessonsCount(@NonNull JSONObject js) {
 
         try {
             List<Integer> list = new ArrayList<>();
@@ -246,6 +247,7 @@ public final class TimetableFragment extends Fragment {
         mainActivity.unlockSaveSwitch();
     }
 
+    @NonNull
     public JSONObject getJson(){
 
         return json;
@@ -256,12 +258,15 @@ public final class TimetableFragment extends Fragment {
         return fromOfflineSource;
     }
 
+    @NonNull
     public String getListName() {
 
         return listName;
     }
 
+    @NonNull
     public TimetableType getTimetableType() {
+
         return type;
     }
 }

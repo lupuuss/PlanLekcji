@@ -1,5 +1,7 @@
 package ga.lupuss.planlekcji.ui.builders;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.PopupMenu;
@@ -21,19 +23,22 @@ final class LessonLayoutBuilder {
 
     private ConstraintLayout mainLayout;
     private LayoutInflater inflater;
+    @NonNull
     static ConstraintLayout empty(
-            LayoutInflater inflater, ViewGroup parent) {
+            @NonNull LayoutInflater inflater, ViewGroup parent) {
 
         return new LessonLayoutBuilder(inflater, parent, true).build();
     }
 
     static LessonLayoutBuilder filled(
-            LayoutInflater inflater, ViewGroup parent) {
+            @NonNull LayoutInflater inflater, ViewGroup parent) {
 
         return new LessonLayoutBuilder(inflater, parent, false);
     }
 
-    private  LessonLayoutBuilder(LayoutInflater inflater, ViewGroup parent, boolean isEmpty){
+    private  LessonLayoutBuilder(@NonNull LayoutInflater inflater,
+                                 @NonNull ViewGroup parent,
+                                 boolean isEmpty){
 
         this.inflater = inflater;
 
@@ -49,6 +54,7 @@ final class LessonLayoutBuilder {
         }
     }
 
+    @NonNull
     final LessonLayoutBuilder number(int i) {
 
         TextView textView = mainLayout.findViewById(R.id.lesson_number);
@@ -56,14 +62,16 @@ final class LessonLayoutBuilder {
         return this;
     }
 
-    final LessonLayoutBuilder hour(Pair<String, String> pair) {
+    @NonNull
+    final LessonLayoutBuilder hour(@NonNull Pair<String, String> pair) {
 
         LinearLayout layout = (LinearLayout)mainLayout.getChildAt(1);
         ((TextView)layout.findViewById(R.id.hours)).setText(pair.first + "\n" + pair.second);
         return this;
     }
 
-    final LessonLayoutBuilder lessons(String... strings) {
+    @NonNull
+    final LessonLayoutBuilder lessons(@NonNull String... strings) {
 
         LinearLayout layout = mainLayout.findViewById(R.id.lesson_lines_linear);
 
@@ -76,8 +84,9 @@ final class LessonLayoutBuilder {
         return this;
     }
 
+    @NonNull
     final LessonLayoutBuilder addPopUpMenu(OnTimetableItemClick onTimetableItemClick,
-                                           List<Pair<TimetableType, String>> links) {
+                                           @Nullable List<Pair<TimetableType, String>> links) {
 
         if (onTimetableItemClick == null || links == null) {
 
@@ -124,6 +133,7 @@ final class LessonLayoutBuilder {
         return this;
     }
 
+    @NonNull
     final ConstraintLayout build() {
 
         return mainLayout;

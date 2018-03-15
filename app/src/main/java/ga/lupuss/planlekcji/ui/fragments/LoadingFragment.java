@@ -1,6 +1,7 @@
 package ga.lupuss.planlekcji.ui.fragments;
 
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,7 +18,6 @@ import ga.lupuss.planlekcji.tools.AntiSpam;
 import ga.lupuss.planlekcji.statics.Bundles;
 import ga.lupuss.planlekcji.ui.activities.MainActivity;
 import ga.lupuss.planlekcji.R;
-import ga.lupuss.planlekcji.managers.timetablemanager.TimetableManager;
 import ga.lupuss.planlekcji.managers.timetablemanager.TimetableType;
 
 public final class LoadingFragment extends Fragment {
@@ -91,7 +91,7 @@ public final class LoadingFragment extends Fragment {
         }
     }
 
-    public final void setOwner(Owner owner) {
+    public final void setOwner(@NonNull Owner owner) {
 
         MainActivity mainActivity = (MainActivity) getActivity();
 

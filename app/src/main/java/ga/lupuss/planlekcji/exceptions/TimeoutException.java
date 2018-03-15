@@ -1,8 +1,10 @@
 package ga.lupuss.planlekcji.exceptions;
 
+import android.support.annotation.NonNull;
+
 public class TimeoutException extends UserMessageException {
 
-    public TimeoutException(String userMessage){
+    public TimeoutException(@NonNull String userMessage){
 
         super(userMessage, "Timeout reached!");
     }

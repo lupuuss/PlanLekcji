@@ -1,35 +1,34 @@
 package ga.lupuss.planlekcji.managers.timetablemanager;
 
+import android.support.annotation.NonNull;
+
 import org.json.JSONObject;
 
-@SuppressWarnings({"unused","WeakerAccess"})
 public class Timetable {
 
     private String slug = "";
     private JSONObject data = new JSONObject();
-    private boolean offline;
     private boolean fromOfflineSource;
 
-    Timetable(String slug, JSONObject data, boolean offline, boolean fromOfflineSource) {
+    Timetable(@NonNull String slug,
+              @NonNull JSONObject data,
+              boolean fromOfflineSource) {
+
         this.slug = slug;
         this.data = data;
-        this.offline = offline;
         this.fromOfflineSource = fromOfflineSource;
     }
 
+    @NonNull
     public String getSlug() {
 
         return slug;
     }
 
+    @NonNull
     public JSONObject getJsonData() {
 
         return data;
-    }
-
-    public boolean isOffline() {
-
-        return offline;
     }
 
     public boolean isFromOfflineSource() {
@@ -37,7 +36,7 @@ public class Timetable {
         return fromOfflineSource;
     }
 
-    void setJsonData(JSONObject jsonData) {
+    void setJsonData(@NonNull JSONObject jsonData) {
 
         data = jsonData;
     }

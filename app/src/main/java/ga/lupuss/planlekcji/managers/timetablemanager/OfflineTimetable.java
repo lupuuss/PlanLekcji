@@ -1,5 +1,6 @@
 package ga.lupuss.planlekcji.managers.timetablemanager;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.json.JSONObject;
@@ -14,18 +15,18 @@ final class OfflineTimetable extends Timetable {
 
     private final File file;
 
-    OfflineTimetable(String slug, JSONObject data, File file) {
+    OfflineTimetable(@NonNull String slug, @NonNull JSONObject data, @NonNull File file) {
 
-        super(slug, data, true, true);
+        super(slug, data, true);
         this.file = file;
     }
 
-    public File getFile() {
+    @NonNull public File getFile() {
 
         return file;
     }
 
-    public void update(JSONObject data) {
+    public void update(@NonNull JSONObject data) {
 
         try {
 

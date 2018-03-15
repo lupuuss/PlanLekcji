@@ -72,6 +72,9 @@ public final class MainActivity extends AppCompatActivity {
     private FragmentManager fragmentManager = getSupportFragmentManager();
     private AntiSpam antiSpam = new AntiSpam();
 
+    private Handler timetableLoadHandler = new Handler();
+    private Toast toast;
+
     //LAYOUT
 
     private DrawerLayout drawerLayout;
@@ -323,6 +326,7 @@ public final class MainActivity extends AppCompatActivity {
         Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container);
 
         if (!(fragment instanceof TimetableFragment)) {
+
             loadAutoTimetable(LoadMode.ANY);
         }
     }
@@ -390,12 +394,14 @@ public final class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        timetablePresenter.cancelThreadControl();
-
         if (!timetablePresenter.isMainTaskNull()) {
 
             timetablePresenter.cancelMainTask();
         }
+
+        timetablePresenter.cancelThreadControl();
+
+        timetableLoadHandler.removeCallbacksAndMessages(null);
     }
 
     @Override
@@ -496,15 +502,7 @@ public final class MainActivity extends AppCompatActivity {
 
         } else {
 
-            runOnUiThread(() ->
-
-                    Toast.makeText(
-                            this,
-                            getString(R.string.update_in_progress),
-                            Toast.LENGTH_LONG
-                    ).show()
-            );
-
+            runOnUiThread(() -> makeSingleLongToastByStringId(R.string.update_in_progress));
         }
     }
 
@@ -521,18 +519,18 @@ public final class MainActivity extends AppCompatActivity {
         timetablePresenter.appInit(mode);
     }
 
-    public void loadTimetable(String listName, TimetableType type,
-                              LoadMode mode, Principal principal) {
+    public void loadTimetable(@NonNull String listName, @NonNull TimetableType type,
+                              @NonNull LoadMode mode, @NonNull Principal principal) {
 
         timetablePresenter.loadTimetable(listName, type, mode, principal);
     }
 
-    public void loadTimetableFromHref(String listName, TimetableType type) {
+    public void loadTimetableFromHref(@NonNull String listName, @NonNull TimetableType type) {
 
         timetablePresenter.loadTimetableFromHref(listName, type);
     }
 
-    private void loadAutoTimetable(LoadMode mode) {
+    private void loadAutoTimetable(@NonNull LoadMode mode) {
 
         timetablePresenter.loadAutoTimetable(mode);
     }
@@ -598,7 +596,7 @@ public final class MainActivity extends AppCompatActivity {
 
     // intents
 
-    public void installApk(File path){
+    public void installApk(@NonNull File path){
 
         Intent i = new Intent();
 
@@ -625,27 +623,31 @@ public final class MainActivity extends AppCompatActivity {
 
     // fragments inits
 
-    public void addTimetableFragmentSmooth(Timetable timetable, boolean removeLast) {
+    public void addTimetableFragmentSmooth(@NonNull Timetable timetable, boolean removeLast) {
 
         fragmentManager.beginTransaction()
                 .remove(fragmentManager.findFragmentById(R.id.fragment_container))
                 .commit();
 
-        new Handler().postDelayed(() ->{
+        timetableLoadHandler.removeCallbacksAndMessages(null);
 
-            if (MainActivity.this.isFinishing() || !MainActivity.isAppInForground(this)) {
+        timetableLoadHandler.postDelayed(() ->{
+
+            if (MainActivity.this.isFinishing() || !MainActivity.isAppInForeground(this)) {
 
                 timetablePresenter.setOnResumeLoad(() -> addTimetableFragment(timetable, removeLast));
                 Log.d(MainActivity.class.getName(), "Load timetable later...");
 
             } else {
+
                 addTimetableFragment(timetable, removeLast);
             }
+
         }, 230);
 
     }
 
-    private void addTimetableFragment(Timetable timetable, boolean removeLast) {
+    private void addTimetableFragment(@NonNull Timetable timetable, boolean removeLast) {
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         TimetableFragment timetableFragment = new TimetableFragment();
@@ -668,11 +670,14 @@ public final class MainActivity extends AppCompatActivity {
 
     }
 
-    public void addLoadingFragmentAndKeepTimetableOnBackStack(boolean isOffline, LoadingFragment.Owner owner) {
+    public void addLoadingFragmentAndKeepTimetableOnBackStack(boolean isOffline,
+                                                              @NonNull LoadingFragment.Owner owner) {
 
         Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container);
 
-        if (!(fragment instanceof LoadingFragment)) { // avoid double animation
+        if (!(fragment instanceof LoadingFragment) || fragment.getView() == null) { // avoid double animation
+
+            Log.v(MainActivity.class.getName(), "New LoadingFragment...");
 
             Fragment loading = new LoadingFragment();
 
@@ -702,6 +707,8 @@ public final class MainActivity extends AppCompatActivity {
 
             // change owner and isOffline if necessary
 
+            Log.v(MainActivity.class.getName(), "Old LoadingFragment...");
+
             ((LoadingFragment)fragment).setOfflineButtonIf(isOffline);
             ((LoadingFragment)fragment).setOwner(owner);
 
@@ -710,13 +717,9 @@ public final class MainActivity extends AppCompatActivity {
 
     public void addFailTimetableLoadingFragment(){
 
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-
-        TimetableFailFragment fragment = new TimetableFailFragment();
-
-        transaction.replace(R.id.fragment_container, fragment);
-        transaction.commit();
-
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, new TimetableFailFragment())
+                .commit();
     }
 
     public void addAppInitFailScreen() {
@@ -728,6 +731,25 @@ public final class MainActivity extends AppCompatActivity {
                 .replace(R.id.fragment_container, fragment)
                 .commit();
 
+    }
+
+    //
+
+    public void makeSingleLongToast(@NonNull String message) {
+
+        if (toast != null) {
+
+            toast.cancel();
+        }
+
+        toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
+
+        toast.show();
+    }
+
+    public void makeSingleLongToastByStringId(int id) {
+
+        makeSingleLongToast(getString(id));
     }
 
     // setters && getters
@@ -746,7 +768,7 @@ public final class MainActivity extends AppCompatActivity {
         return fragmentManager;
     }
 
-    public void setExpandableListViewAdapter(ExpandableListAdapter adapter) {
+    public void setExpandableListViewAdapter(@NonNull ExpandableListAdapter adapter) {
         expandableListView.setAdapter(adapter);
         lastExpandableListViewGroup = -1;
     }
@@ -758,15 +780,16 @@ public final class MainActivity extends AppCompatActivity {
         setSaveSwitchListener(false);
     }
 
-    public void setListNameTitle(String name, TimetableType type) {
+    public void setListNameTitle(@NonNull  String name, @NonNull TimetableType type) {
 
         if (!type.isNameAvailable()) {
 
             title.setText(type.getPrefix() + " " + name);
-        } else {
 
-            if (!timetablePresenter.getTeachersMap().containsValue(name) &&
-                    timetablePresenter.getTeachersMap().containsKey(name)){
+        } else if (timetablePresenter.getTeachersMap() != null){
+
+            if (!timetablePresenter.getTeachersMap().containsValue(name)
+                    && timetablePresenter.getTeachersMap().containsKey(name)){
 
                 title.setText(type.getPrefix() + " " + name);
 
@@ -778,7 +801,7 @@ public final class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void setTitleLabel(String str) {
+    public void setTitleLabel(@NonNull  String str) {
         title.setText(str);
     }
 
@@ -817,7 +840,7 @@ public final class MainActivity extends AppCompatActivity {
 
     }
 
-    public void setModeIndicator(IndicatorMode mode) {
+    public void setModeIndicator(@NonNull IndicatorMode mode) {
 
         switch (mode) {
 
@@ -853,7 +876,7 @@ public final class MainActivity extends AppCompatActivity {
 
     //checkers
 
-    public static boolean isAppInForground(Context context){
+    public static boolean isAppInForeground(@NonNull Context context){
         boolean isInForeground = false;
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
 

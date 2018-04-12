@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 26
@@ -9,8 +8,8 @@ android {
         applicationId "ga.lupuss.planlekcji"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 9
-        versionName "2.02"
+        versionCode 10
+        versionName "2.03"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -22,13 +21,7 @@ android {
     packagingOptions {
         exclude 'META-INF/services/javax.annotation.processing.Processor'
     }
-    lintOptions {
-        abortOnError false
-        disable 'InvalidPackage'
-    }
-    retrolambda {
-        jvmArgs '-noverify'
-    }
+
     buildTypes {
         release {
             minifyEnabled true

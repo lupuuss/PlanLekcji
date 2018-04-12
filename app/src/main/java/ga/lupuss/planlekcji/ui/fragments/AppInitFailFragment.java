@@ -21,7 +21,7 @@ public final class AppInitFailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         LinearLayout layout =
-                (LinearLayout) inflater.inflate(R.layout.fail_lists_loading, container, false);
+                (LinearLayout) inflater.inflate(R.layout.fragment_loading_app_init_fail, container, false);
 
         setButtonsListeners(layout);
 

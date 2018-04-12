@@ -22,7 +22,7 @@ public final class TimetableFailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         LinearLayout layout =
-                (LinearLayout) inflater.inflate(R.layout.fail_timetable_loading, container, false);
+                (LinearLayout) inflater.inflate(R.layout.fragment_timetable_loading_fail, container, false);
 
         setButtonsListeners(layout);
 

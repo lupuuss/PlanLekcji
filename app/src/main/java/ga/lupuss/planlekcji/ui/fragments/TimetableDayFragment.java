@@ -71,11 +71,11 @@ public final class TimetableDayFragment extends Fragment {
     }
 
     @Override
-    @Nullable
+    @NonNull
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
         NestedScrollView scrollView =
-                (NestedScrollView) inflater.inflate(R.layout.timetable_day_fragment, container, false);
+                (NestedScrollView) inflater.inflate(R.layout.fragment_timetable_day, container, false);
 
         LinearLayout layout = scrollView.findViewById(R.id.lessons_container);
 

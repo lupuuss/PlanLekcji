@@ -95,7 +95,7 @@ public final class TimetableFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        LinearLayout linearLayout = (LinearLayout) inflater.inflate(R.layout.timetable_fragment, container, false);
+        LinearLayout linearLayout = (LinearLayout) inflater.inflate(R.layout.fragment_timetable, container, false);
 
         timetableChooser = new TimetableChooser(((MainActivity)getActivity()).getTimetablePresenter().getHoursList());
         lessonsPerDay = lessonsCount(json);

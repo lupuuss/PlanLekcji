@@ -33,11 +33,11 @@ public final class LoadingFragment extends Fragment {
         TIMETABLE, APP_INIT
     }
 
-    @Nullable
+    @NonNull
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
-        LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.loading, container, false);
+        LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.fragment_loading, container, false);
 
         savedInstanceState = getArguments();
 

@@ -1,5 +1,6 @@
 package ga.lupuss.planlekcji.ui.builders;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -62,6 +63,7 @@ final class LessonLayoutBuilder {
         return this;
     }
 
+    @SuppressLint("SetTextI18n")
     @NonNull
     final LessonLayoutBuilder hour(@NonNull Pair<String, String> pair) {
 

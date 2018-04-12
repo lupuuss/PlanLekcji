@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/main_linear">
+
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -51,7 +52,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:id="@+id/title_layout"
-            android:background="@drawable/title_back">
+            android:background="@drawable/underline_back">
 
             <ProgressBar
                 android:layout_width="match_parent"

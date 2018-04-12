@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.support.v4.view.ViewPager;
@@ -15,8 +16,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.astuetz.PagerSlidingTabStrip;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -90,7 +89,7 @@ public final class TimetableFragment extends Fragment {
         }
     }
 
-    @Nullable
+    @NonNull
     @Override
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
@@ -109,8 +108,8 @@ public final class TimetableFragment extends Fragment {
 
         adjustViewPagerToSwipeRefresh(viewPager);
 
-        PagerSlidingTabStrip tabs = linearLayout.findViewById(R.id.tabs);
-        tabs.setViewPager(viewPager);
+        TabLayout tabLayout = linearLayout.findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
 
         footer = linearLayout.findViewById(R.id.layout_footer);
 

@@ -58,7 +58,7 @@ final class TimeInt {
         return minutes;
     }
 
-    static int minutesBetween(TimeInt one, TimeInt two){
+    static int minutesBetween(@NonNull TimeInt one,@NonNull TimeInt two){
 
         int hours = one.hour - two.hour;
         int minutes = one.minutes - two.minutes;

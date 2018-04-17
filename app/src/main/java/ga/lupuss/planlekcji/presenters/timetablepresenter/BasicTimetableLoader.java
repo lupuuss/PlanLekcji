@@ -136,7 +136,7 @@ final class BasicTimetableLoader extends TimetableLoader {
                     logLine() + "> Failed"
             );
 
-            mainActivity.makeSingleLongToast(message);
+            mainActivity.showSingleLongToast(message);
             mainActivity.setModeIndicator(MainActivity.IndicatorMode.NO_NET);
             mainActivity.addFailTimetableLoadingFragment();
         }

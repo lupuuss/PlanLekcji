@@ -29,7 +29,7 @@ import ga.lupuss.planlekcji.exceptions.NoInternetException;
 import ga.lupuss.planlekcji.exceptions.SomethingGoesWrongException;
 import ga.lupuss.planlekcji.exceptions.UserMessageException;
 import ga.lupuss.planlekcji.tools.OldConfig;
-import ga.lupuss.planlekcji.tools.ResponseUtil;
+import ga.lupuss.planlekcji.onlinetools.ResponseUtil;
 import ga.lupuss.planlekcji.tools.Utils;
 import ga.lupuss.simplehttp.Response;
 
@@ -692,6 +692,7 @@ public final class TimetableManager {
      * Prepares all timetables to be used by app.
      * @return true if any timetable loaded
      */
+    @SuppressWarnings("UnusedReturnValue")
     public boolean prepareOfflineTimetables(){
 
         return offlineTimetablesProvider.prepareOfflineData();

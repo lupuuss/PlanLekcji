@@ -1,4 +1,4 @@
-package ga.lupuss.planlekcji.onlineoptions;
+package ga.lupuss.planlekcji.onlinetools;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -17,7 +17,6 @@ import ga.lupuss.planlekcji.statics.Info;
 import ga.lupuss.planlekcji.R;
 import ga.lupuss.planlekcji.exceptions.JsonParserException;
 import ga.lupuss.planlekcji.exceptions.UserMessageException;
-import ga.lupuss.planlekcji.tools.ResponseUtil;
 import ga.lupuss.simplehttp.Header;
 import ga.lupuss.simplehttp.Response;
 import ga.lupuss.simplehttp.SimpleHttp;

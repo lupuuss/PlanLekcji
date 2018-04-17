@@ -4,7 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import ga.lupuss.planlekcji.managers.timetablemanager.TimetableManager;
-import ga.lupuss.planlekcji.ui.activities.MainActivity;
+import ga.lupuss.planlekcji.ui.activities.MainActivityInterface;
 
 abstract class ControlledAsyncTask extends AsyncTask<Void, Void, Integer> {
 
@@ -12,7 +12,7 @@ abstract class ControlledAsyncTask extends AsyncTask<Void, Void, Integer> {
     private boolean running;
     final TimetablePresenter controlPresenter;
     final TimetableManager timetableManager;
-    final protected MainActivity mainActivity;
+    final protected MainActivityInterface mainActivity;
 
     ControlledAsyncTask(TimetablePresenter controlPresenter) {
 

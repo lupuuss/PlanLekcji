@@ -1,4 +1,4 @@
-package ga.lupuss.planlekcji.onlineoptions;
+package ga.lupuss.planlekcji.onlinetools;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -44,7 +44,8 @@ public class ReportOutOfDataCallback {
                 .data(json)
                 .response();
 
-        Log.d(ReportOutOfDataCallback.class.getName(), response.bodyAsString());
+        Log.d(ReportOutOfDataCallback.class.getName(),
+                "Report out of data >> " + response.bodyAsString());
 
         return response.getResponseCode();
     }

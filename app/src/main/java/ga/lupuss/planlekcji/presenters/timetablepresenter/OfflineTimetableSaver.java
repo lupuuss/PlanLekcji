@@ -8,7 +8,7 @@ import android.util.Log;
 import ga.lupuss.planlekcji.R;
 import ga.lupuss.planlekcji.managers.timetablemanager.TimetableManager;
 import ga.lupuss.planlekcji.managers.timetablemanager.TimetableType;
-import ga.lupuss.planlekcji.ui.activities.MainActivity;
+import ga.lupuss.planlekcji.ui.activities.MainActivityInterface;
 import ga.lupuss.planlekcji.ui.fragments.TimetableFragment;
 
 final class OfflineTimetableSaver extends AsyncTask<Void, Void, Integer> {
@@ -23,7 +23,7 @@ final class OfflineTimetableSaver extends AsyncTask<Void, Void, Integer> {
     private final int CAN_NOT_SAVE = 1;
     private final int OK = 2;
 
-    private final MainActivity mainActivity;
+    private final MainActivityInterface mainActivity;
     private final TimetableManager timetableManager;
 
     OfflineTimetableSaver(@NonNull TimetablePresenter timetablePresenter) {
@@ -76,14 +76,14 @@ final class OfflineTimetableSaver extends AsyncTask<Void, Void, Integer> {
 
             if (integer == NO_TT_TO_SAVE) {
 
-                msg = mainActivity.getString(R.string.msg_no_timetable_to_save);
+                msg = mainActivity.getStringByInterface(R.string.msg_no_timetable_to_save);
 
             } else {
 
-                msg = mainActivity.getString(R.string.msg_can_not_save_timetable);
+                msg = mainActivity.getStringByInterface(R.string.msg_can_not_save_timetable);
             }
 
-            mainActivity.makeSingleLongToast(msg);
+            mainActivity.showSingleLongToast(msg);
 
             mainActivity.setSaveSwitchCheckedWithoutEvent(false);
         }

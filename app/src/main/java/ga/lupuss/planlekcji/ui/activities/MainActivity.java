@@ -31,6 +31,7 @@ import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -64,7 +65,7 @@ import ga.lupuss.planlekcji.ui.fragments.LoadingFragment;
 import ga.lupuss.planlekcji.ui.fragments.TimetableFailFragment;
 import ga.lupuss.planlekcji.ui.fragments.TimetableFragment;
 
-public final class MainActivity extends AppCompatActivity {
+public final class MainActivity extends AppCompatActivity implements MainActivityInterface {
 
     private TimetablePresenter timetablePresenter;
     private AppUpdatePresenter appUpdatePresenter;
@@ -171,6 +172,11 @@ public final class MainActivity extends AppCompatActivity {
         setSaveSwitchListener(false);
 
         expandableListView = findViewById(R.id.left_drawer);
+        expandableListView.addHeaderView(
+                getLayoutInflater().inflate(
+                        R.layout.search_header, expandableListView, false
+                )
+        );
         setExpandableListViewOnClicks();
 
         modeIndicator = findViewById(R.id.mode_indicator);
@@ -502,7 +508,7 @@ public final class MainActivity extends AppCompatActivity {
 
         } else {
 
-            runOnUiThread(() -> makeSingleLongToastByStringId(R.string.update_in_progress));
+            runOnUiThread(() -> showSingleLongToastByStringId(R.string.update_in_progress));
         }
     }
 
@@ -735,7 +741,7 @@ public final class MainActivity extends AppCompatActivity {
 
     //
 
-    public void makeSingleLongToast(@NonNull String message) {
+    public void showSingleLongToast(@NonNull String message) {
 
         if (toast != null) {
 
@@ -747,9 +753,9 @@ public final class MainActivity extends AppCompatActivity {
         toast.show();
     }
 
-    public void makeSingleLongToastByStringId(int id) {
+    public void showSingleLongToastByStringId(int id) {
 
-        makeSingleLongToast(getString(id));
+        showSingleLongToast(getString(id));
     }
 
     // setters && getters
@@ -757,6 +763,12 @@ public final class MainActivity extends AppCompatActivity {
     public ProgressBar getUpdateProgressBar() {
 
         return updateProgressBar;
+    }
+
+    @Override
+    public void setRequestedOrientationByInterface(int orientation) {
+
+        setRequestedOrientation(orientation);
     }
 
     public TimetablePresenter getTimetablePresenter() {
@@ -780,6 +792,7 @@ public final class MainActivity extends AppCompatActivity {
         setSaveSwitchListener(false);
     }
 
+    @SuppressLint("SetTextI18n")
     public void setListNameTitle(@NonNull  String name, @NonNull TimetableType type) {
 
         if (!type.isNameAvailable()) {
@@ -803,6 +816,11 @@ public final class MainActivity extends AppCompatActivity {
 
     public void setTitleLabel(@NonNull  String str) {
         title.setText(str);
+    }
+
+    public void setTitleLabel(int id) {
+
+        setTitleLabel(getString(id));
     }
 
     public void lockSaveSwitch(){
@@ -874,18 +892,37 @@ public final class MainActivity extends AppCompatActivity {
         return swipeRefreshLayout;
     }
 
+    public Context getContextByInterface() {
+
+        return getBaseContext();
+    }
+
+    public LayoutInflater getLayoutInflaterByInterface() {
+
+        return getLayoutInflater();
+    }
+
+    @Override
+    public String getStringByInterface(int id) {
+
+        return getString(id);
+    }
+
     //checkers
 
     public static boolean isAppInForeground(@NonNull Context context){
         boolean isInForeground = false;
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
 
-        List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
-        for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
-            if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-                for (String activeProcess : processInfo.pkgList) {
-                    if (activeProcess.equals(context.getPackageName())) {
-                        isInForeground = true;
+        if (am != null) {
+
+            List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
+            for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
+                if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                    for (String activeProcess : processInfo.pkgList) {
+                        if (activeProcess.equals(context.getPackageName())) {
+                            isInForeground = true;
+                        }
                     }
                 }
             }
@@ -924,7 +961,13 @@ public final class MainActivity extends AppCompatActivity {
         ConnectivityManager cm =
                 (ConnectivityManager)this.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        NetworkInfo activeNetwork = null;
+
+        if (cm != null) {
+
+            activeNetwork = cm.getActiveNetworkInfo();
+        }
+
         return activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
     }

@@ -39,10 +39,11 @@ final class AppInitializer extends ControlledAsyncTask {
                 showOfflineButton,
                 LoadingFragment.Owner.APP_INIT
         );
-        mainActivity.setTitleLabel(mainActivity.getString(R.string.lists_loading));
+        mainActivity.setTitleLabel(R.string.lists_loading);
         mainActivity.setExpandableListViewAdapter(
                 BasicExpandableListAdapter.empty(
-                        mainActivity, timetableManager.getExpandableListHeaders()
+                        mainActivity.getContextByInterface(),
+                        timetableManager.getExpandableListHeaders()
                 ));
     }
 
@@ -74,7 +75,7 @@ final class AppInitializer extends ControlledAsyncTask {
             }
         } else {
 
-            message = mainActivity.getString(R.string.msg_no_internet);
+            message = mainActivity.getStringByInterface(R.string.msg_no_internet);
             status = tryOffline();
         }
 
@@ -103,7 +104,7 @@ final class AppInitializer extends ControlledAsyncTask {
 
             mainActivity.setExpandableListViewAdapter(
                     new BasicExpandableListAdapter(
-                            mainActivity,
+                            mainActivity.getContextByInterface(),
                             timetableManager.getExpandableListHeaders(),
                             timetableManager.getExpandableListChildren(integer == OK_OFFLINE)
                     )
@@ -124,7 +125,7 @@ final class AppInitializer extends ControlledAsyncTask {
 
             Log.w(AppInitializer.class.getName(), "Lists not reached");
 
-            mainActivity.makeSingleLongToast(message);
+            mainActivity.showSingleLongToast(message);
             mainActivity.setModeIndicator(MainActivity.IndicatorMode.NO_NET);
             mainActivity.addAppInitFailScreen();
         }

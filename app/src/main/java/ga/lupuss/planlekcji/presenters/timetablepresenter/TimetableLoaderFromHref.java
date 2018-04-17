@@ -97,7 +97,7 @@ final class TimetableLoaderFromHref extends TimetableLoader {
 
                 mainActivity.setExpandableListViewAdapter(
                         new BasicExpandableListAdapter(
-                                mainActivity,
+                                mainActivity.getContextByInterface(),
                                 timetableManager.getExpandableListHeaders(),
                                 timetableManager.getExpandableListChildren(false)
                         )
@@ -124,7 +124,7 @@ final class TimetableLoaderFromHref extends TimetableLoader {
 
             mainActivity.setModeIndicator(MainActivity.IndicatorMode.NO_NET);
             mainActivity.addFailTimetableLoadingFragment();
-            mainActivity.makeSingleLongToast(message);
+            mainActivity.showSingleLongToast(message);
             Log.i(TimetableLoaderFromHref.class.getName(), logLine() + "> Failed");
         }
 

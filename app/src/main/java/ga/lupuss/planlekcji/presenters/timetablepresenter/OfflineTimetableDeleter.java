@@ -7,7 +7,7 @@ import android.support.v4.app.Fragment;
 import ga.lupuss.planlekcji.R;
 import ga.lupuss.planlekcji.managers.timetablemanager.TimetableManager;
 import ga.lupuss.planlekcji.managers.timetablemanager.TimetableType;
-import ga.lupuss.planlekcji.ui.activities.MainActivity;
+import ga.lupuss.planlekcji.ui.activities.MainActivityInterface;
 import ga.lupuss.planlekcji.ui.fragments.TimetableFragment;
 
 final class OfflineTimetableDeleter extends AsyncTask<Void, Void, Boolean> {
@@ -15,7 +15,7 @@ final class OfflineTimetableDeleter extends AsyncTask<Void, Void, Boolean> {
     private String listName;
     private TimetableType type;
     private boolean timetableExist;
-    final private MainActivity mainActivity;
+    final private MainActivityInterface mainActivity;
     final private TimetableManager timetableManager;
 
 
@@ -62,7 +62,7 @@ final class OfflineTimetableDeleter extends AsyncTask<Void, Void, Boolean> {
 
         if (!bool) {
 
-            mainActivity.makeSingleLongToastByStringId(R.string.msg_no_timetable_to_delete);
+            mainActivity.showSingleLongToastByStringId(R.string.msg_no_timetable_to_delete);
             mainActivity.setSaveSwitchCheckedWithoutEvent(true);
         }
 

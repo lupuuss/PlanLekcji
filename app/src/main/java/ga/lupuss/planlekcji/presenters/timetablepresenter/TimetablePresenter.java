@@ -128,7 +128,7 @@ public final class TimetablePresenter {
         } catch (UserMessageException e) {
 
             mainActivity.runOnUiThread(
-                    () -> mainActivity.makeSingleLongToast(e.getUserMessage())
+                    () -> mainActivity.showSingleLongToast(e.getUserMessage())
             );
 
         }
@@ -151,7 +151,7 @@ public final class TimetablePresenter {
             mainActivity.runOnUiThread(
                     () -> {
 
-                        mainActivity.makeSingleLongToastByStringId(R.string.msg_no_internet);
+                        mainActivity.showSingleLongToastByStringId(R.string.msg_no_internet);
                         mainActivity.swipeRefreshLayout.setRefreshing(false);
                     }
             );
@@ -201,7 +201,7 @@ public final class TimetablePresenter {
         }
 
         mainActivity.runOnUiThread(() ->
-                mainActivity.makeSingleLongToast(msg)
+                mainActivity.showSingleLongToast(msg)
         );
 
     }

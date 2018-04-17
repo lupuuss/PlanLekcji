@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
@@ -22,32 +23,32 @@ import ga.lupuss.planlekcji.R;
 import ga.lupuss.planlekcji.exceptions.UserMessageException;
 import ga.lupuss.planlekcji.managers.ChangelogManager;
 import ga.lupuss.planlekcji.managers.MessageManager;
-import ga.lupuss.planlekcji.onlineoptions.AppCheckInHandler;
+import ga.lupuss.planlekcji.onlinetools.AppCheckInHandler;
 import ga.lupuss.planlekcji.statics.Bundles;
 import ga.lupuss.planlekcji.statics.Preferences;
 import ga.lupuss.planlekcji.tools.Files;
-import ga.lupuss.planlekcji.ui.activities.MainActivity;
+import ga.lupuss.planlekcji.ui.activities.MainActivityInterface;
 
 public class AppUpdatePresenter {
 
-    private boolean updateProcess = false;
+    private static boolean updateProcess = false;
     final private AppCheckInHandler appCheckInHandler;
-    final private MainActivity mainActivity;
+    final private MainActivityInterface mainActivity;
     final private ChangelogManager changelogManager = new ChangelogManager();
     final private MessageManager messageManager = new MessageManager();
 
-    public AppUpdatePresenter(MainActivity mainActivity) {
+    public AppUpdatePresenter(MainActivityInterface mainActivity) {
 
         this.appCheckInHandler =
                 new AppCheckInHandler(
-                        mainActivity.getApplicationContext(),
+                        mainActivity.getContextByInterface(),
                         BuildConfig.VERSION_NAME
                 );
 
         this.mainActivity = mainActivity;
     }
 
-    private final class AppChecker extends AsyncTask<Void, Void, Integer> {
+    private final static class AppChecker extends AsyncTask<Void, Void, Integer> {
 
         private String message;
 
@@ -57,12 +58,26 @@ public class AppUpdatePresenter {
         private final boolean quiet;
         private final String mostVisitedSlug;
         private final String type;
+        private final MainActivityInterface mainActivity;
+        private final MessageManager messageManager;
+        private final AppCheckInHandler appCheckInHandler;
+        private final AppUpdatePresenter appUpdatePresenter;
 
-        AppChecker(boolean quiet, @Nullable String mostVisitedSlug, @Nullable String type) {
+        AppChecker(boolean quiet,
+                   @Nullable String mostVisitedSlug,
+                   @Nullable String type,
+                   @NonNull MainActivityInterface mainActivityInterface,
+                   @NonNull MessageManager messageManager,
+                   @NonNull AppCheckInHandler appCheckInHandler,
+                   @NonNull AppUpdatePresenter appUpdatePresenter) {
 
             this.quiet = quiet;
             this.mostVisitedSlug = mostVisitedSlug;
             this.type = type;
+            this.mainActivity = mainActivityInterface;
+            this.messageManager = messageManager;
+            this.appCheckInHandler = appCheckInHandler;
+            this.appUpdatePresenter = appUpdatePresenter;
         }
 
         @Override
@@ -70,7 +85,7 @@ public class AppUpdatePresenter {
 
             try {
 
-                sendIdentity(mostVisitedSlug, type);
+                appUpdatePresenter.sendIdentity(mostVisitedSlug, type);
 
                 if (appCheckInHandler.checkForUpdate()) {
 
@@ -95,12 +110,12 @@ public class AppUpdatePresenter {
 
             if (integer == UPDATE_NEEDED) {
 
-                new AlertDialog.Builder(mainActivity, R.style.DialogTheme)
-                        .setTitle(mainActivity.getString(R.string.update))
-                        .setMessage(mainActivity.getString(R.string.update_found))
+                new AlertDialog.Builder(mainActivity.getContextByInterface(), R.style.DialogTheme)
+                        .setTitle(mainActivity.getStringByInterface(R.string.update))
+                        .setMessage(mainActivity.getStringByInterface(R.string.update_found))
                         .setPositiveButton("Tak",
                                 (dialogInterface, i) ->
-                                        startAppUpdateOrRequestForPermissions())
+                                        appUpdatePresenter.startAppUpdateOrRequestForPermissions())
 
                         .setNegativeButton("Nie", null)
                         .show();
@@ -110,14 +125,14 @@ public class AppUpdatePresenter {
             if (integer != FAIL) {
 
                 PreferenceManager
-                        .getDefaultSharedPreferences(mainActivity)
+                        .getDefaultSharedPreferences(mainActivity.getContextByInterface())
                         .edit()
                         .putLong(Preferences.LAST_CHECK_IN, System.currentTimeMillis())
                         .apply();
 
                 messageManager.showIfNew(
-                        mainActivity,
-                        mainActivity.getLayoutInflater(),
+                        mainActivity.getContextByInterface(),
+                        mainActivity.getLayoutInflaterByInterface(),
                         appCheckInHandler.getApiMessage()
                 );
             }
@@ -126,28 +141,39 @@ public class AppUpdatePresenter {
 
                 if (integer == APP_UP_TO_DATA) {
 
-                    mainActivity.makeSingleLongToastByStringId(R.string.app_up_to_data);
+                    mainActivity.showSingleLongToastByStringId(R.string.app_up_to_data);
 
                 } else if(integer == FAIL){
 
-                    mainActivity.makeSingleLongToast(message);
+                    mainActivity.showSingleLongToast(message);
                 }
 
             }
         }
     }
 
-    private final class AppUpdater extends AsyncTask<Void, Integer, Boolean> {
+    private final static class AppUpdater extends AsyncTask<Void, Integer, Boolean> {
 
         private File apkPath;
         private final String UPDATE_FILENAME = "plan_lekcji_update.apk";
+        private final MainActivityInterface mainActivity;
+        private final AppCheckInHandler appCheckInHandler;
+        private final ChangelogManager changelogManager;
+
+        AppUpdater(MainActivityInterface mainActivityInterface,
+                   AppCheckInHandler appCheckInHandler,
+                   ChangelogManager changelogManager) {
+            mainActivity = mainActivityInterface;
+            this.appCheckInHandler = appCheckInHandler;
+            this.changelogManager = changelogManager;
+        }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             mainActivity.getUpdateProgressBar().setVisibility(View.VISIBLE);
             updateProcess = true;
-            mainActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
+            mainActivity.setRequestedOrientationByInterface(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
         }
 
         @Override
@@ -218,7 +244,7 @@ public class AppUpdatePresenter {
             super.onPostExecute(aBoolean);
 
             mainActivity.getUpdateProgressBar().setVisibility(View.INVISIBLE);
-            mainActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+            mainActivity.setRequestedOrientationByInterface(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 
             changelogManager.save(
                     appCheckInHandler.getApiChangeLog(),
@@ -235,7 +261,7 @@ public class AppUpdatePresenter {
         @Override
         protected void onCancelled() {
 
-            mainActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+            mainActivity.setRequestedOrientationByInterface(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
             super.onCancelled();
             updateProcess = false;
         }
@@ -249,7 +275,8 @@ public class AppUpdatePresenter {
 
     public void checkInToApi(boolean quiet, @Nullable String mostVisitedSlug, @Nullable String type) {
 
-        new AppChecker(quiet, mostVisitedSlug, type).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new AppChecker(quiet, mostVisitedSlug, type, mainActivity, messageManager, appCheckInHandler, this)
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     public void sendIdentity(@Nullable String mostSlug, @Nullable String typeArg) {
@@ -290,12 +317,16 @@ public class AppUpdatePresenter {
 
     public void startAppUpdate() {
 
-        new AppUpdater().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new AppUpdater(mainActivity, appCheckInHandler, changelogManager)
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     public void showChangelogIfReady() {
 
-        changelogManager.showIfReady(mainActivity, mainActivity.getLayoutInflater());
+        changelogManager.showIfReady(
+                mainActivity.getContextByInterface(),
+                mainActivity.getLayoutInflaterByInterface()
+        );
         changelogManager.clear();
     }
 

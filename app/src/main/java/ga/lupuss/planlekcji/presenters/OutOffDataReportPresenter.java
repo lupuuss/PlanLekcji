@@ -4,19 +4,27 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 import ga.lupuss.planlekcji.R;
-import ga.lupuss.planlekcji.onlineoptions.ReportOutOfDataCallback;
-import ga.lupuss.planlekcji.ui.activities.MainActivity;
+import ga.lupuss.planlekcji.onlinetools.ReportOutOfDataCallback;
+import ga.lupuss.planlekcji.ui.activities.MainActivityInterface;
 
 public class OutOffDataReportPresenter {
 
-    final private MainActivity mainActivity;
+    final private MainActivityInterface mainActivity;
 
-    public OutOffDataReportPresenter(@NonNull MainActivity mainActivity) {
+    public OutOffDataReportPresenter(@NonNull MainActivityInterface mainActivity) {
 
         this.mainActivity = mainActivity;
     }
 
-    private final class OutOfDateReporter extends AsyncTask<Void, Void, Integer> {
+    private final static class OutOfDataReporter extends AsyncTask<Void, Void, Integer> {
+
+        private MainActivityInterface mainActivity;
+
+        OutOfDataReporter(MainActivityInterface mainActivityInterface) {
+
+            mainActivity = mainActivityInterface;
+        }
+
         @Override
         protected Integer doInBackground(Void... voids) {
 
@@ -30,20 +38,20 @@ public class OutOffDataReportPresenter {
 
             if (integer == 200){
 
-                mainActivity.makeSingleLongToastByStringId(R.string.report_ok);
+                mainActivity.showSingleLongToastByStringId(R.string.report_ok);
 
             } else if (integer == 403) {
 
-                mainActivity.makeSingleLongToastByStringId(R.string.report_ok_but_up_to_date);
+                mainActivity.showSingleLongToastByStringId(R.string.report_ok_but_up_to_date);
             } else {
 
-                mainActivity.makeSingleLongToastByStringId(R.string.report_error);
+                mainActivity.showSingleLongToastByStringId(R.string.report_error);
             }
         }
     }
 
     public void report() {
 
-        new OutOfDateReporter().execute();
+        new OutOfDataReporter(mainActivity).execute();
     }
 }

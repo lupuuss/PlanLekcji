@@ -95,7 +95,7 @@ class DataUpdater extends ControlledAsyncTask {
 
             mainActivity.setExpandableListViewAdapter(
                     new BasicExpandableListAdapter(
-                            mainActivity,
+                            mainActivity.getContextByInterface(),
                             timetableManager.getExpandableListHeaders(),
                             timetableManager.getExpandableListChildren(false)
                     )
@@ -113,7 +113,7 @@ class DataUpdater extends ControlledAsyncTask {
 
                 mainActivity.setExpandableListViewAdapter(
                         new BasicExpandableListAdapter(
-                                mainActivity,
+                                mainActivity.getContextByInterface(),
                                 timetableManager.getExpandableListHeaders(),
                                 timetableManager.getExpandableListChildren(false)
                         )
@@ -122,7 +122,7 @@ class DataUpdater extends ControlledAsyncTask {
 
             Log.i(DataUpdater.class.getName(), "> > > failed");
             mainActivity.addFailTimetableLoadingFragment();
-            mainActivity.makeSingleLongToast(message);
+            mainActivity.showSingleLongToast(message);
             mainActivity.setModeIndicator(MainActivity.IndicatorMode.NO_NET);
 
         }

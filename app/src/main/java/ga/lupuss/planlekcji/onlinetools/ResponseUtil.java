@@ -1,4 +1,4 @@
-package ga.lupuss.planlekcji.tools;
+package ga.lupuss.planlekcji.onlinetools;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

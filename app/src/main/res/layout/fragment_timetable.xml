@@ -27,6 +27,9 @@
             app:tabIndicatorColor="@color/colorFont"
             app:tabBackground="@drawable/underline_back"
             app:tabIndicatorHeight="6dp"
+            app:tabMaxWidth="0dp"
+            app:tabGravity="fill"
+            app:tabMode="fixed"
             />
     </android.support.v4.view.ViewPager>
 

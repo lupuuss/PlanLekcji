@@ -1,6 +1,5 @@
 package ga.lupuss.planlekcji.onlinetools;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 
 import org.json.JSONArray;
@@ -10,7 +9,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 
-import ga.lupuss.planlekcji.R;
 import ga.lupuss.planlekcji.exceptions.JsonParserException;
 import ga.lupuss.planlekcji.exceptions.ServerException;
 import ga.lupuss.planlekcji.exceptions.ServerResourcesException;
@@ -23,8 +21,8 @@ import ga.lupuss.simplehttp.Response;
 public class ResponseUtil {
 
     @NonNull
-    public static JSONObject fetchResponseToJsonObject(@NonNull Context appContext,
-                                                       @NonNull Response response) throws UserMessageException {
+    public static JSONObject fetchResponseToJsonObject(@NonNull Response response)
+            throws UserMessageException {
 
         if (response.isResponseCodeOK()) {
 
@@ -35,18 +33,17 @@ public class ResponseUtil {
             } catch (JSONException e) {
 
                 e.printStackTrace();
-                throw new JsonParserException(appContext.getString(R.string.msg_json_error));
+                throw new JsonParserException();
             }
 
         } else {
 
-            throw fetchResponseException(appContext, response);
+            throw fetchResponseException(response);
         }
     }
 
     @NonNull
-    public static  JSONArray fetchResponseToJsonArray(@NonNull Context appContext,
-                                                      @NonNull Response response) throws UserMessageException {
+    public static  JSONArray fetchResponseToJsonArray(@NonNull Response response) throws UserMessageException {
 
         if (response.isResponseCodeOK()) {
 
@@ -57,18 +54,17 @@ public class ResponseUtil {
             } catch (JSONException e) {
 
                 e.printStackTrace();
-                throw new JsonParserException(appContext.getString(R.string.msg_json_error));
+                throw new JsonParserException();
             }
 
         } else {
 
-            throw fetchResponseException(appContext, response);
+            throw fetchResponseException(response);
         }
     }
 
     @NonNull
-    private static UserMessageException fetchResponseException(@NonNull Context appContext,
-                                                               @NonNull Response response)  {
+    private static UserMessageException fetchResponseException(@NonNull Response response)  {
 
         int code = response.getResponseCode();
 
@@ -76,7 +72,7 @@ public class ResponseUtil {
 
             if (response.getResponseMessage().startsWith(Response.TIMEOUT_MSG)) {
 
-                return new TimeoutException(appContext.getString(R.string.msg_timeout_error));
+                return new TimeoutException();
 
             }
 
@@ -89,9 +85,7 @@ public class ResponseUtil {
                 if (e instanceof InterruptedIOException ||
                         e.getCause() instanceof InterruptedIOException) {
 
-                    return new UserInterruptedException(
-                            appContext.getString(R.string.msg_something_goes_wrong)
-                    );
+                    return new UserInterruptedException();
                 }
 
             }
@@ -100,18 +94,14 @@ public class ResponseUtil {
 
         if (code > 500) {
 
-            return new ServerException(appContext.getString(R.string.msg_server_error));
+            return new ServerException();
 
         } else if(code >= 400) {
 
-            return new ServerResourcesException(
-                    appContext.getString(R.string.msg_server_resources_error)
-            );
+            return new ServerResourcesException();
         }
 
-        return new SomethingGoesWrongException(
-                appContext.getString(R.string.msg_something_goes_wrong)
-        );
+        return new SomethingGoesWrongException();
     }
 
 }

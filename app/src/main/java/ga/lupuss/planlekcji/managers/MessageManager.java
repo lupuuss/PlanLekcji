@@ -14,6 +14,7 @@ import java.io.IOException;
 import ga.lupuss.planlekcji.statics.Info;
 import ga.lupuss.planlekcji.R;
 import ga.lupuss.planlekcji.tools.Files;
+import ga.lupuss.planlekcji.ui.activities.MainView;
 
 public class MessageManager {
 
@@ -35,23 +36,11 @@ public class MessageManager {
 
     }
 
-    public void showIfNew(@NonNull Context context,
-                          @NonNull LayoutInflater inflater,
-                          @NonNull String message) {
+    public void showIfNew(@NonNull String message, MainView mainView) {
 
         if (!this.message.equals(message) && !message.equals("")) {
 
-            @SuppressLint("InflateParams")
-            ScrollView scrollView =
-                    (ScrollView) inflater.inflate(R.layout.scrollable_alert, null, false);
-
-            ((TextView) scrollView.findViewById(R.id.textViewWithScroll)).setText(message);
-
-            new AlertDialog.Builder(context, R.style.DialogTheme)
-                    .setTitle(context.getString(R.string.info))
-                    .setView(scrollView)
-                    .setPositiveButton("OK", null)
-                    .show();
+            mainView.postInfoDialog(message);
 
         }
 

@@ -6,12 +6,11 @@ import android.util.Log;
 import ga.lupuss.planlekcji.R;
 import ga.lupuss.planlekcji.exceptions.UserMessageException;
 import ga.lupuss.planlekcji.ui.activities.MainActivity;
-import ga.lupuss.planlekcji.ui.adapters.BasicExpandableListAdapter;
 import ga.lupuss.planlekcji.ui.fragments.LoadingFragment;
 
 final class AppInitializer extends ControlledAsyncTask {
 
-    private String message;
+    private Integer message = null;
 
     final private int OK_ONLINE = 2;
     final private int OK_OFFLINE = 1;
@@ -34,17 +33,13 @@ final class AppInitializer extends ControlledAsyncTask {
             showOfflineButton = timetableManager.isAnyOfflineTimetable();
         }
 
-        mainActivity.setModeIndicatorByInternetConnection();
-        mainActivity.addLoadingFragmentAndKeepTimetableOnBackStack(
+        mainView.setModeIndicatorByInternetConnection();
+        mainView.addLoadingFragmentAndKeepTimetableOnBackStack(
                 showOfflineButton,
                 LoadingFragment.Owner.APP_INIT
         );
-        mainActivity.setTitleLabel(R.string.lists_loading);
-        mainActivity.setExpandableListViewAdapter(
-                BasicExpandableListAdapter.empty(
-                        mainActivity.getContextByInterface(),
-                        timetableManager.getExpandableListHeaders()
-                ));
+        mainView.setTitleLabel(R.string.lists_loading);
+        mainView.setExpandableListViewEmpty();
     }
 
     @NonNull
@@ -55,12 +50,12 @@ final class AppInitializer extends ControlledAsyncTask {
 
         int status;
 
-        if ((mainActivity.isOnline()
+        if ((mainView.isOnline()
                 || timetableManager.areListsOK()) && mode != LoadMode.FORCE_OFFLINE) {
 
             try {
 
-                boolean isFresh = timetableManager.prepareOnlineLists(false, mainActivity.isOnline());
+                boolean isFresh = timetableManager.prepareOnlineLists(false, mainView.isOnline());
 
                 Log.i(AppInitializer.class.getName(),
                         "Lists reached from " + (isFresh ? "internet" : "RAM"));
@@ -69,13 +64,13 @@ final class AppInitializer extends ControlledAsyncTask {
 
             } catch (UserMessageException e) {
 
-                message = e.getUserMessage();
+                message = e.getUserMessageId();
 
                 status = tryOffline();
             }
         } else {
 
-            message = mainActivity.getStringByInterface(R.string.msg_no_internet);
+            message = R.string.msg_no_internet;
             status = tryOffline();
         }
 
@@ -102,22 +97,18 @@ final class AppInitializer extends ControlledAsyncTask {
 
         if(integer != BAD) {
 
-            mainActivity.setExpandableListViewAdapter(
-                    new BasicExpandableListAdapter(
-                            mainActivity.getContextByInterface(),
-                            timetableManager.getExpandableListHeaders(),
-                            timetableManager.getExpandableListChildren(integer == OK_OFFLINE)
-                    )
+            mainView.setExpandableListViewData(
+                    timetableManager.getExpandableListChildren(integer == OK_OFFLINE)
             );
 
             if (integer == OK_ONLINE) {
 
-                mainActivity.setModeIndicator(MainActivity.IndicatorMode.NET);
+                mainView.setModeIndicator(MainActivity.IndicatorMode.NET);
                 controlPresenter.loadAutoTimetable(LoadMode.ANY);
 
             } else if(integer == OK_OFFLINE) {
 
-                mainActivity.setModeIndicator(MainActivity.IndicatorMode.OFFLINE);
+                mainView.setModeIndicator(MainActivity.IndicatorMode.OFFLINE);
                 controlPresenter.loadAutoTimetable(LoadMode.FORCE_OFFLINE);
             }
 
@@ -125,9 +116,9 @@ final class AppInitializer extends ControlledAsyncTask {
 
             Log.w(AppInitializer.class.getName(), "Lists not reached");
 
-            mainActivity.showSingleLongToast(message);
-            mainActivity.setModeIndicator(MainActivity.IndicatorMode.NO_NET);
-            mainActivity.addAppInitFailScreen();
+            mainView.showSingleLongToast(message);
+            mainView.setModeIndicator(MainActivity.IndicatorMode.NO_NET);
+            mainView.addAppInitFailScreen();
         }
 
         super.onPostExecute(integer);

@@ -1,11 +1,11 @@
 package ga.lupuss.planlekcji.exceptions;
 
-import android.support.annotation.NonNull;
+import ga.lupuss.planlekcji.R;
 
 public class ServerResourcesException extends UserMessageException {
 
-    public ServerResourcesException(@NonNull String userMessage) {
+    public ServerResourcesException() {
 
-        super(userMessage, "Server couldn't find requested data!");
+        super(R.string.msg_server_resources_error, "Server couldn't find requested data!");
     }
 }

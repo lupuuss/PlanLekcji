@@ -1,11 +1,11 @@
 package ga.lupuss.planlekcji.exceptions;
 
-import android.support.annotation.NonNull;
+import ga.lupuss.planlekcji.R;
 
 public class SomethingGoesWrongException extends UserMessageException {
 
-    public SomethingGoesWrongException(@NonNull String userMessage){
+    public SomethingGoesWrongException(){
 
-        super(userMessage, "Unknown error!");
+        super(R.string.msg_something_goes_wrong, "Unknown error!");
     }
 }

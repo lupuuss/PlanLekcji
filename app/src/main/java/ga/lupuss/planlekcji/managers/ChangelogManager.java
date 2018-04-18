@@ -1,13 +1,7 @@
 package ga.lupuss.planlekcji.managers;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.widget.ScrollView;
-import android.widget.TextView;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +10,6 @@ import java.util.List;
 
 import ga.lupuss.planlekcji.BuildConfig;
 import ga.lupuss.planlekcji.statics.Info;
-import ga.lupuss.planlekcji.R;
 import ga.lupuss.planlekcji.tools.Files;
 
 public class ChangelogManager {
@@ -26,7 +19,7 @@ public class ChangelogManager {
     private List<String> changeLog = new ArrayList<>();
     private String changelogVersion;
 
-    public void save(@NonNull List<String> changeLog,@NonNull  String version) {
+    public void saveChangelog(@NonNull List<String> changeLog, @NonNull  String version) {
 
         File path = new File(Info.APP_FILES_DIR, CHANGELOG_FILENAME);
         File versionFile = new File(Info.APP_FILES_DIR, CHANGELOG_VERSION_FILENAME);
@@ -53,7 +46,7 @@ public class ChangelogManager {
         }
     }
 
-    public void load() {
+    public void loadChangelog() {
 
         File file =  new File(Info.APP_FILES_DIR, CHANGELOG_FILENAME);
         File versionFile = new File(Info.APP_FILES_DIR, CHANGELOG_VERSION_FILENAME);
@@ -71,7 +64,7 @@ public class ChangelogManager {
 
     }
 
-    public void clear() {
+    public void clearChangelog() {
 
         File changelogFile = new File(Info.APP_FILES_DIR, CHANGELOG_FILENAME);
         File versionFile = new File(Info.APP_FILES_DIR, CHANGELOG_VERSION_FILENAME);
@@ -87,26 +80,14 @@ public class ChangelogManager {
 
     }
 
-    public void showIfReady(@NonNull Context context, @NonNull LayoutInflater inflater) {
+    public boolean isChangelogReady() {
 
         if (changeLog.isEmpty() || !versionControl()) {
 
             Log.d(ChangelogManager.class.getName(), "Changelog rejected");
-            return;
+            return false;
         }
-
-        @SuppressLint("InflateParams")
-        ScrollView scrollView =
-                (ScrollView) inflater.inflate(R.layout.scrollable_alert, null, false);
-
-        ((TextView) scrollView.findViewById(R.id.textViewWithScroll)).setText(getChangelogString());
-
-        new AlertDialog.Builder(context, R.style.DialogTheme)
-                .setTitle(context.getString(R.string.changelog))
-                .setView(scrollView)
-                .setPositiveButton("OK", null)
-                .show();
-
+        return false;
     }
 
     private boolean versionControl() {
@@ -121,7 +102,7 @@ public class ChangelogManager {
     }
 
     @NonNull
-    private String getChangelogString() {
+    public String getChangelogString() {
 
         StringBuilder builder = new StringBuilder("");
 

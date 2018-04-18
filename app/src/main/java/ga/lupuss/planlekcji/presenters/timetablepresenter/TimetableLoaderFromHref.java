@@ -25,16 +25,16 @@ final class TimetableLoaderFromHref extends TimetableLoader {
     protected void onPreExecute() {
         super.onPreExecute();
 
-        mainActivity.setListNameTitle(listName, type);
-        mainActivity.lockSaveSwitch();
+        mainView.setListNameTitle(listName, type);
+        mainView.lockSaveSwitch();
 
         boolean showOfflineButton;
 
-        mainActivity.setModeIndicatorByInternetConnection();
+        mainView.setModeIndicatorByInternetConnection();
         showOfflineButton = timetableManager.isOfflineAvailable(listName, type);
 
 
-        mainActivity.addLoadingFragmentAndKeepTimetableOnBackStack(
+        mainView.addLoadingFragmentAndKeepTimetableOnBackStack(
                 showOfflineButton,
                 LoadingFragment.Owner.TIMETABLE
         );
@@ -60,26 +60,26 @@ final class TimetableLoaderFromHref extends TimetableLoader {
                                 listName,
                                 type,
                                 Principal.USER,
-                                mainActivity.isOnline()
+                                mainView.isOnline()
                         );
 
                 status = (timetable.isFromOfflineSource()) ? OK_OFFLINE : OK_ONLINE;
             } else {
 
                 timetableManager.setLastFocusedTimetable(new Pair<>(listName, type));
-                timetableManager.prepareOnlineLists(true, mainActivity.isOnline());
+                timetableManager.prepareOnlineLists(true, mainView.isOnline());
                 timetable = timetableManager.getOnlineTimetable(
                         listName,
                         type,
                         Principal.USER,
-                        mainActivity.isOnline()
+                        mainView.isOnline()
                 );
 
                 status = OK_ONLINE_LISTS;
             }
 
         } catch (UserMessageException e) {
-            message = e.getUserMessage();
+            message = e.getUserMessageId();
             status = BAD;
         }
 
@@ -95,12 +95,8 @@ final class TimetableLoaderFromHref extends TimetableLoader {
 
             if (integer == OK_ONLINE_LISTS) {
 
-                mainActivity.setExpandableListViewAdapter(
-                        new BasicExpandableListAdapter(
-                                mainActivity.getContextByInterface(),
-                                timetableManager.getExpandableListHeaders(),
-                                timetableManager.getExpandableListChildren(false)
-                        )
+                mainView.setExpandableListViewData(
+                        timetableManager.getExpandableListChildren(false)
                 );
 
                 Log.i(
@@ -117,14 +113,14 @@ final class TimetableLoaderFromHref extends TimetableLoader {
                 );
             }
 
-            mainActivity.unlockSaveSwitch();
-            mainActivity.addTimetableFragmentSmooth(timetable, false);
+            mainView.unlockSaveSwitch();
+            mainView.addTimetableFragmentSmooth(timetable, false);
 
         } else {
 
-            mainActivity.setModeIndicator(MainActivity.IndicatorMode.NO_NET);
-            mainActivity.addFailTimetableLoadingFragment();
-            mainActivity.showSingleLongToast(message);
+            mainView.setModeIndicator(MainActivity.IndicatorMode.NO_NET);
+            mainView.addFailTimetableLoadingFragment();
+            mainView.showSingleLongToast(message);
             Log.i(TimetableLoaderFromHref.class.getName(), logLine() + "> Failed");
         }
 

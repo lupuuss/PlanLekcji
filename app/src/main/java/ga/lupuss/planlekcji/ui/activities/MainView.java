@@ -1,30 +1,32 @@
 package ga.lupuss.planlekcji.ui.activities;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentManager;
-import android.view.LayoutInflater;
-import android.widget.ExpandableListAdapter;
+import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.widget.ProgressBar;
 
 import java.io.File;
+import java.util.List;
+import java.util.Map;
 
 import ga.lupuss.planlekcji.managers.timetablemanager.Timetable;
 import ga.lupuss.planlekcji.managers.timetablemanager.TimetableType;
 import ga.lupuss.planlekcji.ui.fragments.LoadingFragment;
 
-public interface MainActivityInterface {
+public interface MainView {
 
     @SuppressLint("HardwareIds")
     String getAndroidID();
-    FragmentManager getMyFragmentManager();
+    Fragment getCurrentFragment();
+
+    SwipeRefreshLayout getSwipeRefreshingLayout();
     ProgressBar getUpdateProgressBar();
 
     void lockSaveSwitch();
     void unlockSaveSwitch();
 
-    void showSingleLongToastByStringId(int id);
+    void showSingleLongToast(int id);
     void showSingleLongToast(@NonNull String message);
 
     void addLoadingFragmentAndKeepTimetableOnBackStack(boolean isOffline,
@@ -32,7 +34,12 @@ public interface MainActivityInterface {
     void addTimetableFragmentSmooth(@NonNull Timetable timetable, boolean removeLast);
     void addFailTimetableLoadingFragment();
     void addAppInitFailScreen();
+    
     void installApk(File file);
+
+    void postNewUpdateDialog(@NonNull Runnable onYesClick);
+    void postInfoDialog(@NonNull String message);
+    void postChangelogDialog(@NonNull String changelogString);
 
     void setTitleLabel(@NonNull  String str);
     void setTitleLabel(int id);
@@ -40,13 +47,13 @@ public interface MainActivityInterface {
     void setSaveSwitchCheckedWithoutEvent(boolean b);
     void setModeIndicatorByInternetConnection();
     void setListNameTitle(@NonNull  String name, @NonNull TimetableType type);
+    void setExpandableListViewEmpty();
+    void setExpandableListViewData(@NonNull Map<String, List<String>> children);
 
     boolean isOnline();
     boolean isStoragePermissionGranted();
+    boolean timetableFragmentExists();
 
-    void setRequestedOrientationByInterface(int orientation);
-    LayoutInflater getLayoutInflaterByInterface();
-    String getStringByInterface(int id);
-    Context getContextByInterface();
-    void setExpandableListViewAdapter(@NonNull ExpandableListAdapter adapter);
+    void executeOnUiThread(Runnable runnable);
+    void setOrientation(int orientation);
 }

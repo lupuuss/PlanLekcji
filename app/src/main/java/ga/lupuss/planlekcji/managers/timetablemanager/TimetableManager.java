@@ -1,6 +1,5 @@
 package ga.lupuss.planlekcji.managers.timetablemanager;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -23,7 +22,6 @@ import ga.lupuss.planlekcji.exceptions.UserInterruptedException;
 import ga.lupuss.planlekcji.presenters.timetablepresenter.Principal;
 import ga.lupuss.planlekcji.statics.Bundles;
 import ga.lupuss.planlekcji.statics.Preferences;
-import ga.lupuss.planlekcji.R;
 import ga.lupuss.planlekcji.exceptions.JsonParserException;
 import ga.lupuss.planlekcji.exceptions.NoInternetException;
 import ga.lupuss.planlekcji.exceptions.SomethingGoesWrongException;
@@ -32,8 +30,6 @@ import ga.lupuss.planlekcji.tools.OldConfig;
 import ga.lupuss.planlekcji.onlinetools.ResponseUtil;
 import ga.lupuss.planlekcji.tools.Utils;
 import ga.lupuss.simplehttp.Response;
-
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 /**
  * Manage all timetables and timetable's lists. Provides methods to download and parse them.
@@ -50,7 +46,6 @@ public final class TimetableManager {
 
     private final List<String> headersList;
 
-    private Context appContext;
     private TimetableResponseProvider responseProvider;
     private OfflineTimetableProvider offlineTimetablesProvider;
 
@@ -61,15 +56,15 @@ public final class TimetableManager {
     private TimetableStats stats = new TimetableStats();
 
 
-    public TimetableManager(@NonNull Context appContext,
+    public TimetableManager(@NonNull SharedPreferences sharedPreferences,
                             @NonNull TimetableResponseProvider responseProvider,
+                            @NonNull String[] expandableListViewHeaders,
                             @NonNull OfflineTimetableProvider offlineTimetableProvider) {
 
-        this.appContext = appContext;
         this.responseProvider = responseProvider;
         this.offlineTimetablesProvider = offlineTimetableProvider;
-        this.preferences = getDefaultSharedPreferences(appContext);
-        headersList = Arrays.asList(appContext.getResources().getStringArray(R.array.headers));
+        this.preferences = sharedPreferences;
+        headersList = Arrays.asList(expandableListViewHeaders);
     }
 
     // LISTS GETTERS
@@ -97,12 +92,6 @@ public final class TimetableManager {
     }
 
     // FOR EXPANDABLE LIST VIEW LISTS
-
-    @NonNull
-    public List<String> getExpandableListHeaders() {
-
-        return headersList;
-    }
 
     @NonNull
     public Map<String, List<String>> getExpandableListChildren(boolean needSort) {
@@ -222,9 +211,7 @@ public final class TimetableManager {
             return  offlineTimetablesProvider.getTimetable(slug, type);
         }
 
-        throw new SomethingGoesWrongException(
-                appContext.getString(R.string.msg_something_goes_wrong)
-        );
+        throw new SomethingGoesWrongException();
     }
     @NonNull
     public Timetable getOnlineTimetable(@NonNull String listName,
@@ -238,14 +225,11 @@ public final class TimetableManager {
 
         if (!internetStatus) {
 
-            throw new NoInternetException(appContext.getString(R.string.msg_no_internet));
+            throw new NoInternetException();
         }
 
         JSONObject json =
-                ResponseUtil.fetchResponseToJsonObject(
-                        appContext,
-                        responseProvider.getTimetable(slug, type)
-                );
+                ResponseUtil.fetchResponseToJsonObject(responseProvider.getTimetable(slug, type));
 
         if (offlineTimetablesProvider.containsTimetable(slug, type)) {
 
@@ -295,7 +279,7 @@ public final class TimetableManager {
             return new Pair<>(str, TimetableType.CLASSROOM);
         }
 
-        throw new SomethingGoesWrongException(appContext.getString(R.string.msg_no_internet));
+        throw new NoInternetException();
     }
 
     public Pair<String, TimetableType> getLastFocusedTimetable() {
@@ -453,7 +437,7 @@ public final class TimetableManager {
 
                 if (!internetStatus) {
 
-                    throw new NoInternetException(appContext.getString(R.string.msg_no_internet));
+                    throw new NoInternetException();
                 }
 
                 List<Response> responses = responseProvider.getAllLists();
@@ -462,9 +446,7 @@ public final class TimetableManager {
 
                 offlineTimetablesProvider
                         .saveHours(
-                                ResponseUtil.fetchResponseToJsonArray(
-                                        appContext, responses.get(2)
-                                ).toString()
+                                ResponseUtil.fetchResponseToJsonArray(responses.get(2)).toString()
                         );
 
                 parseResponsesToLists(responses);
@@ -478,7 +460,7 @@ public final class TimetableManager {
 
         } catch (JSONException e){
 
-            throw new JsonParserException(appContext.getString(R.string.msg_json_error));
+            throw new JsonParserException();
         }
 
     }
@@ -583,22 +565,22 @@ public final class TimetableManager {
 
         List<String> classesList =
                 ListParser.parseTimetableList(
-                        ResponseUtil.fetchResponseToJsonArray(appContext, responses.get(0)),
+                        ResponseUtil.fetchResponseToJsonArray(responses.get(0)),
                         TimetableType.CLASS
                 );
 
         List<String> classroomsList =
                 ListParser.parseTimetableList(
-                        ResponseUtil.fetchResponseToJsonArray(appContext, responses.get(1)),
+                        ResponseUtil.fetchResponseToJsonArray(responses.get(1)),
                         TimetableType.CLASSROOM
                 );
 
         List<Pair<String, String>> hoursList =
-                ListParser.parseHoursList(ResponseUtil.fetchResponseToJsonArray(appContext, responses.get(2)));
+                ListParser.parseHoursList(ResponseUtil.fetchResponseToJsonArray(responses.get(2)));
 
         Map<String, String> teachersList =
                 ListParser.parseTimetableListWithNames(
-                        ResponseUtil.fetchResponseToJsonArray(appContext, responses.get(3))
+                        ResponseUtil.fetchResponseToJsonArray(responses.get(3))
                 );
 
         // no exceptions so all can be public

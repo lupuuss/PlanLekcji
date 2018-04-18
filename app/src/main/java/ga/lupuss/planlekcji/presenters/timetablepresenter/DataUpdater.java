@@ -19,7 +19,7 @@ class DataUpdater extends ControlledAsyncTask {
     final private int OK = 2;
     final private int ONLY_LISTS = 1;
     final private int BAD = 0;
-    private String message;
+    private Integer message = null;
 
     DataUpdater(@NonNull TimetablePresenter controlPresenter) {
 
@@ -30,7 +30,7 @@ class DataUpdater extends ControlledAsyncTask {
     protected void onPreExecute() {
         super.onPreExecute();
 
-        mainActivity.lockSaveSwitch();
+        mainView.lockSaveSwitch();
 
         boolean isOffline = false;
 
@@ -40,10 +40,10 @@ class DataUpdater extends ControlledAsyncTask {
             isOffline = timetableManager.isOfflineAvailable(pair.first, pair.second);
         }
 
-        mainActivity.addLoadingFragmentAndKeepTimetableOnBackStack(isOffline,
+        mainView.addLoadingFragmentAndKeepTimetableOnBackStack(isOffline,
                 LoadingFragment.Owner.TIMETABLE);
 
-        mainActivity.setModeIndicatorByInternetConnection();
+        mainView.setModeIndicatorByInternetConnection();
     }
 
     @Override
@@ -56,7 +56,7 @@ class DataUpdater extends ControlledAsyncTask {
 
         try {
 
-            timetableManager.prepareOnlineLists(true, mainActivity.isOnline());
+            timetableManager.prepareOnlineLists(true, mainView.isOnline());
 
             Pair<String, TimetableType> timetablePair = timetableManager.pickAutoTimetable();
 
@@ -66,7 +66,7 @@ class DataUpdater extends ControlledAsyncTask {
                     timetablePair.first,
                     timetablePair.second,
                     Principal.UPDATER,
-                    mainActivity.isOnline()
+                    mainView.isOnline()
             );
 
             status = OK;
@@ -74,7 +74,7 @@ class DataUpdater extends ControlledAsyncTask {
         } catch (UserMessageException e) {
 
             e.printStackTrace();
-            message = e.getUserMessage();
+            message = e.getUserMessageId();
 
             if (status != ONLY_LISTS) {
 
@@ -93,17 +93,13 @@ class DataUpdater extends ControlledAsyncTask {
 
             Log.i(DataUpdater.class.getName(), "> > > All fine");
 
-            mainActivity.setExpandableListViewAdapter(
-                    new BasicExpandableListAdapter(
-                            mainActivity.getContextByInterface(),
-                            timetableManager.getExpandableListHeaders(),
-                            timetableManager.getExpandableListChildren(false)
-                    )
+            mainView.setExpandableListViewData(
+                    timetableManager.getExpandableListChildren(false)
             );
 
-            mainActivity.unlockSaveSwitch();
-            mainActivity.addTimetableFragmentSmooth(timetable, true);
-            mainActivity.setModeIndicator(MainActivity.IndicatorMode.NET);
+            mainView.unlockSaveSwitch();
+            mainView.addTimetableFragmentSmooth(timetable, true);
+            mainView.setModeIndicator(MainActivity.IndicatorMode.NET);
 
         } else {
 
@@ -111,19 +107,15 @@ class DataUpdater extends ControlledAsyncTask {
 
                 Log.i(DataUpdater.class.getName(), "> > > Only lists fine");
 
-                mainActivity.setExpandableListViewAdapter(
-                        new BasicExpandableListAdapter(
-                                mainActivity.getContextByInterface(),
-                                timetableManager.getExpandableListHeaders(),
-                                timetableManager.getExpandableListChildren(false)
-                        )
+                mainView.setExpandableListViewData(
+                        timetableManager.getExpandableListChildren(false)
                 );
             }
 
             Log.i(DataUpdater.class.getName(), "> > > failed");
-            mainActivity.addFailTimetableLoadingFragment();
-            mainActivity.showSingleLongToast(message);
-            mainActivity.setModeIndicator(MainActivity.IndicatorMode.NO_NET);
+            mainView.addFailTimetableLoadingFragment();
+            mainView.showSingleLongToast(message);
+            mainView.setModeIndicator(MainActivity.IndicatorMode.NO_NET);
 
         }
 

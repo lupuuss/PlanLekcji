@@ -1,11 +1,11 @@
 package ga.lupuss.planlekcji.exceptions;
 
-import android.support.annotation.NonNull;
+import ga.lupuss.planlekcji.R;
 
 public class UserInterruptedException extends UserMessageException {
 
-    public UserInterruptedException(@NonNull String userMessage) {
+    public UserInterruptedException() {
 
-        super(userMessage, "Task interrupted!");
+        super(R.string.msg_something_goes_wrong, "Task interrupted!");
     }
 }

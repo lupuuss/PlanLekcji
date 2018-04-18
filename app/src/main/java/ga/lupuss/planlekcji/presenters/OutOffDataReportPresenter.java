@@ -5,24 +5,24 @@ import android.support.annotation.NonNull;
 
 import ga.lupuss.planlekcji.R;
 import ga.lupuss.planlekcji.onlinetools.ReportOutOfDataCallback;
-import ga.lupuss.planlekcji.ui.activities.MainActivityInterface;
+import ga.lupuss.planlekcji.ui.activities.MainView;
 
 public class OutOffDataReportPresenter {
 
-    final private MainActivityInterface mainActivity;
+    final private MainView mainActivity;
 
-    public OutOffDataReportPresenter(@NonNull MainActivityInterface mainActivity) {
+    public OutOffDataReportPresenter(@NonNull MainView mainActivity) {
 
         this.mainActivity = mainActivity;
     }
 
     private final static class OutOfDataReporter extends AsyncTask<Void, Void, Integer> {
 
-        private MainActivityInterface mainActivity;
+        private MainView mainActivity;
 
-        OutOfDataReporter(MainActivityInterface mainActivityInterface) {
+        OutOfDataReporter(MainView mainView) {
 
-            mainActivity = mainActivityInterface;
+            mainActivity = mainView;
         }
 
         @Override
@@ -38,14 +38,14 @@ public class OutOffDataReportPresenter {
 
             if (integer == 200){
 
-                mainActivity.showSingleLongToastByStringId(R.string.report_ok);
+                mainActivity.showSingleLongToast(R.string.report_ok);
 
             } else if (integer == 403) {
 
-                mainActivity.showSingleLongToastByStringId(R.string.report_ok_but_up_to_date);
+                mainActivity.showSingleLongToast(R.string.report_ok_but_up_to_date);
             } else {
 
-                mainActivity.showSingleLongToastByStringId(R.string.report_error);
+                mainActivity.showSingleLongToast(R.string.report_error);
             }
         }
     }

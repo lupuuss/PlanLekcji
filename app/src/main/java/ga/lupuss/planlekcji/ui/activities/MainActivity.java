@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
@@ -31,7 +32,6 @@ import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,11 +40,14 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import ga.lupuss.planlekcji.BuildConfig;
 import ga.lupuss.planlekcji.managers.timetablemanager.TimetableStats;
@@ -60,12 +63,13 @@ import ga.lupuss.planlekcji.R;
 import ga.lupuss.planlekcji.managers.timetablemanager.Timetable;
 import ga.lupuss.planlekcji.managers.timetablemanager.TimetableType;
 import ga.lupuss.planlekcji.tools.AntiSpam;
+import ga.lupuss.planlekcji.ui.adapters.BasicExpandableListAdapter;
 import ga.lupuss.planlekcji.ui.fragments.AppInitFailFragment;
 import ga.lupuss.planlekcji.ui.fragments.LoadingFragment;
 import ga.lupuss.planlekcji.ui.fragments.TimetableFailFragment;
 import ga.lupuss.planlekcji.ui.fragments.TimetableFragment;
 
-public final class MainActivity extends AppCompatActivity implements MainActivityInterface {
+public final class MainActivity extends AppCompatActivity implements MainView, ResourceProvider {
 
     private TimetablePresenter timetablePresenter;
     private AppUpdatePresenter appUpdatePresenter;
@@ -80,7 +84,7 @@ public final class MainActivity extends AppCompatActivity implements MainActivit
 
     private DrawerLayout drawerLayout;
     private ExpandableListView expandableListView;
-    public SwipeRefreshLayout swipeRefreshLayout;
+    private  SwipeRefreshLayout swipeRefreshLayout;
     private int lastExpandableListViewGroup = -1;
 
     //  TOOLBAR
@@ -105,7 +109,8 @@ public final class MainActivity extends AppCompatActivity implements MainActivit
 
         timetablePresenter = new TimetablePresenter(this);
         appUpdatePresenter = new AppUpdatePresenter(this);
-        loadData();
+        timetablePresenter.onCreate();
+        appUpdatePresenter.onCreate();
 
         super.onCreate(savedInstanceState);
 
@@ -119,7 +124,7 @@ public final class MainActivity extends AppCompatActivity implements MainActivit
 
         if (savedInstanceState != null) {
 
-            appUpdatePresenter.restoreUpdateProcess(savedInstanceState);
+            appUpdatePresenter.onRestore(savedInstanceState);
 
             if (appUpdatePresenter.isUpdateProcess()) {
 
@@ -172,11 +177,6 @@ public final class MainActivity extends AppCompatActivity implements MainActivit
         setSaveSwitchListener(false);
 
         expandableListView = findViewById(R.id.left_drawer);
-        expandableListView.addHeaderView(
-                getLayoutInflater().inflate(
-                        R.layout.search_header, expandableListView, false
-                )
-        );
         setExpandableListViewOnClicks();
 
         modeIndicator = findViewById(R.id.mode_indicator);
@@ -187,12 +187,6 @@ public final class MainActivity extends AppCompatActivity implements MainActivit
 
         updateProgressBar = findViewById(R.id.update_progress_bar);
         toolbarInit();
-    }
-
-    private void loadData() {
-
-        timetablePresenter.loadData();
-        appUpdatePresenter.loadData();
     }
 
     private void setSwipeRefreshListener() {
@@ -214,7 +208,7 @@ public final class MainActivity extends AppCompatActivity implements MainActivit
 
     }
 
-    private void setExpandableListViewOnClicks() {
+     private void setExpandableListViewOnClicks() {
 
         final String [] IGNORED_VALUES = {"-"};
 
@@ -352,24 +346,12 @@ public final class MainActivity extends AppCompatActivity implements MainActivit
     protected void onResume() {
         super.onResume();
 
-        timetablePresenter.resumeThreadControl();
+        checkInToApiIfNeeded();
 
-        checkForInToApiIfNeeded();
-
-        if (timetablePresenter.isOnResumeLoadAvailable()) {
-
-            Log.d(MainActivity.class.getName(), "Load timetable after pause...");
-
-            new Handler().postDelayed(() -> {
-
-                timetablePresenter.getOnResumeLoad().run();
-                timetablePresenter.setOnResumeLoadNull();
-            }, 100);
-        }
-
+        timetablePresenter.onResume();
     }
 
-    private void checkForInToApiIfNeeded() {
+    private void checkInToApiIfNeeded() {
 
         // check for update procedure
 
@@ -377,9 +359,9 @@ public final class MainActivity extends AppCompatActivity implements MainActivit
                 .getDefaultSharedPreferences(this)
                 .getLong(Preferences.LAST_CHECK_IN, 0);
 
-        final long MAX_DIFF = 2 * 60 * 60 * 1000;
 
-        if (System.currentTimeMillis() - lastCheck > MAX_DIFF && isOnline()
+
+        if (System.currentTimeMillis() - lastCheck > Info.MAX_DIFF && isOnline()
                 && !BuildConfig.VERSION_NAME.contains("ALPHA")) {
 
             checkInToApi(true);
@@ -391,21 +373,13 @@ public final class MainActivity extends AppCompatActivity implements MainActivit
     protected void onPause() {
         super.onPause();
 
-        if (!isFinishing()) {
-
-            timetablePresenter.pauseThreadControl();
-        }
+        timetablePresenter.onPause(isFinishing());
     }
 
     protected void onDestroy() {
         super.onDestroy();
 
-        if (!timetablePresenter.isMainTaskNull()) {
-
-            timetablePresenter.cancelMainTask();
-        }
-
-        timetablePresenter.cancelThreadControl();
+        timetablePresenter.onDestroy();
 
         timetableLoadHandler.removeCallbacksAndMessages(null);
     }
@@ -454,15 +428,10 @@ public final class MainActivity extends AppCompatActivity implements MainActivit
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
 
-        timetablePresenter.backUpState(savedInstanceState);
-        appUpdatePresenter.backUpState(savedInstanceState);
+        appUpdatePresenter.onSaveInstanceState(savedInstanceState, isChangingConfigurations());
+        timetablePresenter.onSaveInstanceState(savedInstanceState, isChangingConfigurations());
 
         savedInstanceState.putString(Bundles.TITLE, title.getText().toString());
-
-        if (!timetablePresenter.isMainTaskNull() && isChangingConfigurations()) {
-
-            timetablePresenter.cancelMainTask();
-        }
 
         super.onSaveInstanceState(savedInstanceState);
     }
@@ -478,6 +447,12 @@ public final class MainActivity extends AppCompatActivity implements MainActivit
 
             startAppUpdate();
         }
+    }
+
+    @Override
+    public void executeOnUiThread(Runnable runnable) {
+
+        runOnUiThread(runnable);
     }
 
     // Right menu onClicks
@@ -508,7 +483,7 @@ public final class MainActivity extends AppCompatActivity implements MainActivit
 
         } else {
 
-            runOnUiThread(() -> showSingleLongToastByStringId(R.string.update_in_progress));
+            runOnUiThread(() -> showSingleLongToast(R.string.update_in_progress));
         }
     }
 
@@ -627,6 +602,53 @@ public final class MainActivity extends AppCompatActivity implements MainActivit
         finish();
     }
 
+    // dialogs inits
+
+    @Override
+    public void postNewUpdateDialog(@NonNull Runnable onYesClick) {
+
+        new AlertDialog.Builder(this, R.style.DialogTheme)
+                .setTitle(R.string.update)
+                .setMessage(R.string.update_found)
+                .setPositiveButton("Tak",
+                        (dialogInterface, i) -> onYesClick.run())
+
+                .setNegativeButton("Nie", null)
+                .show();
+    }
+
+    @Override
+    public void postInfoDialog(@NonNull String message) {
+        @SuppressLint("InflateParams")
+        ScrollView scrollView =
+                (ScrollView) getLayoutInflater()
+                        .inflate(R.layout.scrollable_alert, null, false);
+
+        ((TextView) scrollView.findViewById(R.id.textViewWithScroll)).setText(message);
+
+        new AlertDialog.Builder(this, R.style.DialogTheme)
+                .setTitle(R.string.info)
+                .setView(scrollView)
+                .setPositiveButton("OK", null)
+                .show();
+    }
+
+    @Override
+    public void postChangelogDialog(@NonNull String changelogString) {
+
+        @SuppressLint("InflateParams")
+        ScrollView scrollView =
+                (ScrollView) getLayoutInflater().inflate(R.layout.scrollable_alert, null, false);
+
+        ((TextView) scrollView.findViewById(R.id.textViewWithScroll)).setText(changelogString);
+
+        new AlertDialog.Builder(this, R.style.DialogTheme)
+                .setTitle(R.string.changelog)
+                .setView(scrollView)
+                .setPositiveButton("OK", null)
+                .show();
+    }
+
     // fragments inits
 
     public void addTimetableFragmentSmooth(@NonNull Timetable timetable, boolean removeLast) {
@@ -739,7 +761,7 @@ public final class MainActivity extends AppCompatActivity implements MainActivit
 
     }
 
-    //
+    // toasts
 
     public void showSingleLongToast(@NonNull String message) {
 
@@ -753,7 +775,7 @@ public final class MainActivity extends AppCompatActivity implements MainActivit
         toast.show();
     }
 
-    public void showSingleLongToastByStringId(int id) {
+    public void showSingleLongToast(int id) {
 
         showSingleLongToast(getString(id));
     }
@@ -766,7 +788,7 @@ public final class MainActivity extends AppCompatActivity implements MainActivit
     }
 
     @Override
-    public void setRequestedOrientationByInterface(int orientation) {
+    public void setOrientation(int orientation) {
 
         setRequestedOrientation(orientation);
     }
@@ -776,11 +798,13 @@ public final class MainActivity extends AppCompatActivity implements MainActivit
         return timetablePresenter;
     }
 
-    public FragmentManager getMyFragmentManager() {
-        return fragmentManager;
+    @Override
+    public SwipeRefreshLayout getSwipeRefreshingLayout() {
+
+        return swipeRefreshLayout;
     }
 
-    public void setExpandableListViewAdapter(@NonNull ExpandableListAdapter adapter) {
+    private void setExpandableListViewAdapter(@NonNull ExpandableListAdapter adapter) {
         expandableListView.setAdapter(adapter);
         lastExpandableListViewGroup = -1;
     }
@@ -887,25 +911,61 @@ public final class MainActivity extends AppCompatActivity implements MainActivit
 
     }
 
+    @Override
+    public void setExpandableListViewEmpty() {
+
+        setExpandableListViewAdapter(
+                BasicExpandableListAdapter.empty(
+                        this,
+                        Arrays.asList(getStringArray(R.array.headers))
+                )
+        );
+    }
+
+    @Override
+    public void setExpandableListViewData(@NonNull Map<String, List<String>> children) {
+
+        setExpandableListViewAdapter(new BasicExpandableListAdapter(
+                this,
+                Arrays.asList(getStringArray(R.array.headers)),
+                children)
+        );
+    }
+
     public SwipeRefreshLayout getSwipeRefreshLayout() {
 
         return swipeRefreshLayout;
     }
 
-    public Context getContextByInterface() {
+    @NonNull
+    @Override
+    public SharedPreferences getSharedPreferences() {
 
-        return getBaseContext();
-    }
-
-    public LayoutInflater getLayoutInflaterByInterface() {
-
-        return getLayoutInflater();
+        return PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     @Override
-    public String getStringByInterface(int id) {
+    public String[] getStringArray(int id) {
+
+        return getResources().getStringArray(id);
+    }
+
+    @Override
+    public String getStringById(int id) {
 
         return getString(id);
+    }
+
+    @SuppressLint("HardwareIds")
+    public String getAndroidID() {
+        return Settings.Secure.getString(this.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+    }
+
+    @Override
+    public Fragment getCurrentFragment() {
+
+        return fragmentManager.findFragmentById(R.id.fragment_container);
     }
 
     //checkers
@@ -951,11 +1011,14 @@ public final class MainActivity extends AppCompatActivity implements MainActivit
         }
     }
 
-    @SuppressLint("HardwareIds")
-    public String getAndroidID() {
-        return Settings.Secure.getString(this.getContentResolver(),
-                Settings.Secure.ANDROID_ID);
+    @Override
+    public boolean timetableFragmentExists() {
+
+        return fragmentManager
+                .findFragmentById(R.id.fragment_container) instanceof TimetableFragment;
     }
+
+    @Override
 
     public boolean isOnline(){
         ConnectivityManager cm =

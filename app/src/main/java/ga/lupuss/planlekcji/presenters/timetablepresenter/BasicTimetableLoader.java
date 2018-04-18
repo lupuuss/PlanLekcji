@@ -29,32 +29,32 @@ final class BasicTimetableLoader extends TimetableLoader {
     protected void onPreExecute() {
         super.onPreExecute();
 
-        mainActivity.setListNameTitle(listName, type);
-        mainActivity.lockSaveSwitch();
+        mainView.setListNameTitle(listName, type);
+        mainView.lockSaveSwitch();
 
         boolean showOfflineButton;
 
         if (mode == LoadMode.FORCE_OFFLINE) {
 
-            mainActivity.setModeIndicator(MainActivity.IndicatorMode.OFFLINE);
+            mainView.setModeIndicator(MainActivity.IndicatorMode.OFFLINE);
             showOfflineButton = false;
 
         } else {
 
             showOfflineButton = timetableManager.isOfflineAvailable(listName, type);
 
-            if (showOfflineButton && !mainActivity.isOnline()) {
+            if (showOfflineButton && !mainView.isOnline()) {
 
 
-                mainActivity.setModeIndicator(MainActivity.IndicatorMode.OFFLINE);
+                mainView.setModeIndicator(MainActivity.IndicatorMode.OFFLINE);
 
             } else {
 
-                mainActivity.setModeIndicatorByInternetConnection();
+                mainView.setModeIndicatorByInternetConnection();
             }
         }
 
-        mainActivity.addLoadingFragmentAndKeepTimetableOnBackStack(
+        mainView.addLoadingFragmentAndKeepTimetableOnBackStack(
                 showOfflineButton,
                 LoadingFragment.Owner.TIMETABLE
         );
@@ -78,7 +78,7 @@ final class BasicTimetableLoader extends TimetableLoader {
                             listName,
                             type,
                             principal,
-                            mainActivity.isOnline()
+                            mainView.isOnline()
                     );
                     break;
 
@@ -88,7 +88,7 @@ final class BasicTimetableLoader extends TimetableLoader {
                             listName,
                             type,
                             principal,
-                            mainActivity.isOnline()
+                            mainView.isOnline()
                     );
                     break;
 
@@ -107,7 +107,7 @@ final class BasicTimetableLoader extends TimetableLoader {
         } catch (UserMessageException e) {
 
             e.printStackTrace();
-            message = e.getUserMessage();
+            message = e.getUserMessageId();
             status = BAD;
         }
 
@@ -127,7 +127,7 @@ final class BasicTimetableLoader extends TimetableLoader {
                             + ((integer == OK_ONLINE) ? "ONLINE" : "OFFLINE")
             );
 
-            mainActivity.addTimetableFragmentSmooth(timetable, false);
+            mainView.addTimetableFragmentSmooth(timetable, false);
 
         } else {
 
@@ -136,9 +136,9 @@ final class BasicTimetableLoader extends TimetableLoader {
                     logLine() + "> Failed"
             );
 
-            mainActivity.showSingleLongToast(message);
-            mainActivity.setModeIndicator(MainActivity.IndicatorMode.NO_NET);
-            mainActivity.addFailTimetableLoadingFragment();
+            mainView.showSingleLongToast(message);
+            mainView.setModeIndicator(MainActivity.IndicatorMode.NO_NET);
+            mainView.addFailTimetableLoadingFragment();
         }
 
         super.onPostExecute(integer);

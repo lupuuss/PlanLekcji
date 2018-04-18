@@ -2,6 +2,7 @@ package ga.lupuss.planlekcji.presenters.timetablepresenter;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,37 +19,89 @@ import ga.lupuss.planlekcji.managers.timetablemanager.BasicTimetableResponseProv
 import ga.lupuss.planlekcji.managers.timetablemanager.TimetableManager;
 import ga.lupuss.planlekcji.managers.timetablemanager.TimetableStats;
 import ga.lupuss.planlekcji.managers.timetablemanager.TimetableType;
+import ga.lupuss.planlekcji.presenters.Notifiable;
 import ga.lupuss.planlekcji.ui.activities.MainActivity;
-import ga.lupuss.planlekcji.ui.adapters.BasicExpandableListAdapter;
+import ga.lupuss.planlekcji.ui.activities.MainView;
+import ga.lupuss.planlekcji.ui.activities.ResourceProvider;
 import ga.lupuss.planlekcji.ui.fragments.TimetableFragment;
 
-public final class TimetablePresenter {
+public final class TimetablePresenter implements Notifiable {
 
     private ThreadControl control = new ThreadControl();
     private ControlledAsyncTask mainAsyncTask;
     private Runnable onResumeLoad;
     private TimetableManager timetableManager;
 
-    private MainActivity mainActivity;
+    private MainView mainView;
+    private ResourceProvider resourceProvider;
 
     public TimetablePresenter(@NonNull MainActivity activity) {
 
-        this.mainActivity = activity;
+        this.mainView = activity;
+        resourceProvider = activity;
         this.timetableManager = new TimetableManager(
-                mainActivity.getApplicationContext(),
+                resourceProvider.getSharedPreferences(),
                 new BasicTimetableResponseProvider(),
+                resourceProvider.getStringArray(R.array.headers),
                 new BasicOfflineTimetableProvider()
         );
     }
 
-    public void loadData() {
-
+    @Override
+    public void onCreate() {
         timetableManager.prepareOfflineTimetables();
         timetableManager.loadDefaultTimetable();
         timetableManager.loadStats();
     }
 
-    public void backUpState(@NonNull Bundle savedInstanceState) {
+    @Override
+    public void onResume() {
+
+        control.resume();
+
+        if (onResumeLoad != null) {
+
+            Log.d(TimetablePresenter.class.getName(), "Load timetable after pause...");
+
+            new Handler().postDelayed(() -> {
+
+                onResumeLoad.run();
+                onResumeLoad = null;
+            }, 100);
+        }
+
+    }
+
+    @Override
+    public void onPause(boolean isFinishing) {
+
+        if (!isFinishing) {
+            control.pause();
+        }
+    }
+
+    @Override
+    public void onDestroy(){
+
+        if (mainAsyncTask != null) {
+
+            mainAsyncTask.cancel(true);
+        }
+        control.cancel();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState, boolean isConfigurationChanging) {
+
+        backUpState(savedInstanceState);
+
+        if (mainAsyncTask != null && isConfigurationChanging){
+
+            mainAsyncTask.cancel(true);
+        }
+    }
+
+    private void backUpState(@NonNull Bundle savedInstanceState) {
 
         timetableManager.backUpLists(savedInstanceState);
         timetableManager.backUpLastFocusedTimetable(savedInstanceState);
@@ -68,12 +121,8 @@ public final class TimetablePresenter {
 
         if (timetableManager.areListsOK()) {
 
-            mainActivity.setExpandableListViewAdapter(
-                    new BasicExpandableListAdapter(
-                            mainActivity,
-                            timetableManager.getExpandableListHeaders(),
+            mainView.setExpandableListViewData(
                             timetableManager.getExpandableListChildren(true)
-                    )
             );
 
             Log.d(MainActivity.class.getName(), "LISTS RESTORED");
@@ -127,8 +176,8 @@ public final class TimetablePresenter {
 
         } catch (UserMessageException e) {
 
-            mainActivity.runOnUiThread(
-                    () -> mainActivity.showSingleLongToast(e.getUserMessage())
+            mainView.executeOnUiThread(
+                    () -> mainView.showSingleLongToast(e.getUserMessageId())
             );
 
         }
@@ -142,17 +191,17 @@ public final class TimetablePresenter {
 
     public void updateData() {
 
-        if (mainActivity.isOnline()) {
+        if (mainView.isOnline()) {
 
             runControlledAsyncTask(new DataUpdater(this));
 
         } else {
 
-            mainActivity.runOnUiThread(
+            mainView.executeOnUiThread(
                     () -> {
 
-                        mainActivity.showSingleLongToastByStringId(R.string.msg_no_internet);
-                        mainActivity.swipeRefreshLayout.setRefreshing(false);
+                        mainView.showSingleLongToast(R.string.msg_no_internet);
+                        mainView.getSwipeRefreshingLayout().setRefreshing(false);
                     }
             );
 
@@ -170,12 +219,12 @@ public final class TimetablePresenter {
     }
 
     public void setCurrentAsDefaultOnClick() {
-
-        Fragment fragment =
-                mainActivity.getMyFragmentManager().findFragmentById(R.id.fragment_container);
         String msg;
 
-        if (fragment instanceof TimetableFragment) {
+        if (mainView.timetableFragmentExists()) {
+
+            Fragment fragment =
+                    mainView.getCurrentFragment();
 
             Pair<String, TimetableType> pair = new Pair<>(
                     ((TimetableFragment)fragment).getListName(),
@@ -185,57 +234,31 @@ public final class TimetablePresenter {
             if (timetableManager.isDefaultTimetableAvailable()
                     && pair.equals(timetableManager.getDefaultTimetable())){
 
-                msg = String.format(mainActivity.getString(R.string.already_default), pair.first);
+                msg = String.format(
+                        resourceProvider.getStringById(R.string.already_default),
+                        pair.first
+                );
 
             } else {
 
                 timetableManager.setDefaultTimetable(pair.first, pair.second);
 
-                msg = String.format(mainActivity.getString(R.string.now_is_default), pair.first);
+                msg = String.format(
+                        resourceProvider.getStringById(R.string.now_is_default),
+                        pair.first
+                );
             }
 
         } else {
 
-            msg = mainActivity.getString(R.string.no_timetable_loaded);
+            msg = resourceProvider.getStringById(R.string.no_timetable_loaded);
 
         }
 
-        mainActivity.runOnUiThread(() ->
-                mainActivity.showSingleLongToast(msg)
+        mainView.executeOnUiThread(() ->
+                mainView.showSingleLongToast(msg)
         );
 
-    }
-
-    // main task control
-
-    public void resumeThreadControl() {
-
-        control.resume();
-    }
-
-    public void pauseThreadControl() {
-
-        control.pause();
-    }
-
-    public boolean isMainTaskNull() {
-
-        return mainAsyncTask == null;
-    }
-
-    public void cancelMainTask() {
-
-        mainAsyncTask.cancel(true);
-    }
-
-    public void cancelThreadControl() {
-
-        control.cancel();
-    }
-
-    public boolean isOnResumeLoadAvailable() {
-
-        return onResumeLoad != null;
     }
 
     public void pauseCurrentControlledAsyncTask() {
@@ -250,11 +273,6 @@ public final class TimetablePresenter {
     public void setOnResumeLoad(@Nullable Runnable onResumeLoad) {
 
         this.onResumeLoad = onResumeLoad;
-    }
-
-    public void setOnResumeLoadNull() {
-
-        onResumeLoad = null;
     }
 
     public void setOnStatsLeaderChanged(@Nullable Runnable runnable) {
@@ -297,19 +315,14 @@ public final class TimetablePresenter {
         return timetableManager.isMostVisitedTimetableAvailable();
     }
 
-    public Runnable getOnResumeLoad() {
-
-        return onResumeLoad;
-    }
-
     @NonNull ThreadControl getThreadControl() {
 
         return control;
     }
 
-    @NonNull MainActivity getMainActivity() {
+    @NonNull MainView getMainView() {
 
-        return mainActivity;
+        return mainView;
     }
 
     @NonNull TimetableManager getTimetableManager() {

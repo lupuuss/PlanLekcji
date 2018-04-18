@@ -1,11 +1,11 @@
 package ga.lupuss.planlekcji.exceptions;
 
-import android.support.annotation.NonNull;
+import ga.lupuss.planlekcji.R;
 
 public class NoInternetException extends UserMessageException {
 
-    public NoInternetException(@NonNull String userMessage) {
+    public NoInternetException() {
 
-        super(userMessage, "No internet connection");
+        super(R.string.msg_no_internet, "No internet connection");
     }
 }

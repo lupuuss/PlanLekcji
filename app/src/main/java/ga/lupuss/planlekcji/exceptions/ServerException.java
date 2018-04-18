@@ -1,11 +1,11 @@
 package ga.lupuss.planlekcji.exceptions;
 
-import android.support.annotation.NonNull;
+import ga.lupuss.planlekcji.R;
 
 public class ServerException extends UserMessageException {
 
-    public ServerException(@NonNull String userMessage) {
+    public ServerException() {
 
-        super(userMessage, "Server not working!");
+        super(R.string.msg_server_error, "Server not working!");
     }
 }

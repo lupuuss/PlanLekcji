@@ -7,7 +7,7 @@ import ga.lupuss.planlekcji.managers.timetablemanager.TimetableType;
 
 abstract class TimetableLoader extends ControlledAsyncTask  {
 
-    protected String message = null;
+    protected Integer message = null;
     protected Timetable timetable;
     String listName;
     protected TimetableType type;

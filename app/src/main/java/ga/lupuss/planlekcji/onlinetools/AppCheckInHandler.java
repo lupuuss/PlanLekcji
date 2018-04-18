@@ -1,6 +1,5 @@
 package ga.lupuss.planlekcji.onlinetools;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -14,7 +13,6 @@ import java.util.List;
 
 import ga.lupuss.planlekcji.BuildConfig;
 import ga.lupuss.planlekcji.statics.Info;
-import ga.lupuss.planlekcji.R;
 import ga.lupuss.planlekcji.exceptions.JsonParserException;
 import ga.lupuss.planlekcji.exceptions.UserMessageException;
 import ga.lupuss.simplehttp.Header;
@@ -38,11 +36,8 @@ public class AppCheckInHandler {
     private final String MESSAGE_FIELD = "message";
     private final String CHANGELOG_FIELD = "changelog";
 
-    private Context context;
-
-    public AppCheckInHandler(@NonNull Context context, @NonNull String version) {
+    public AppCheckInHandler(@NonNull String version) {
         currentVersion = version;
-        this.context = context;
     }
 
     public boolean checkForUpdate() throws UserMessageException {
@@ -50,7 +45,7 @@ public class AppCheckInHandler {
 
         Response response = SimpleHttp.get(Info.API_URL + PATH_MOBILE_APP).response();
 
-        parseJson(ResponseUtil.fetchResponseToJsonObject(context, response));
+        parseJson(ResponseUtil.fetchResponseToJsonObject(response));
 
         return !currentVersion.equals(apiVersion);
     }
@@ -75,7 +70,7 @@ public class AppCheckInHandler {
 
         } catch (JSONException e) {
 
-            throw new JsonParserException(context.getString(R.string.msg_json_error));
+            throw new JsonParserException();
 
         }
     }

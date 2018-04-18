@@ -7,7 +7,7 @@ import android.support.v4.app.Fragment;
 import ga.lupuss.planlekcji.R;
 import ga.lupuss.planlekcji.managers.timetablemanager.TimetableManager;
 import ga.lupuss.planlekcji.managers.timetablemanager.TimetableType;
-import ga.lupuss.planlekcji.ui.activities.MainActivityInterface;
+import ga.lupuss.planlekcji.ui.activities.MainView;
 import ga.lupuss.planlekcji.ui.fragments.TimetableFragment;
 
 final class OfflineTimetableDeleter extends AsyncTask<Void, Void, Boolean> {
@@ -15,25 +15,25 @@ final class OfflineTimetableDeleter extends AsyncTask<Void, Void, Boolean> {
     private String listName;
     private TimetableType type;
     private boolean timetableExist;
-    final private MainActivityInterface mainActivity;
+    final private MainView mainView;
     final private TimetableManager timetableManager;
 
 
     OfflineTimetableDeleter(@NonNull TimetablePresenter timetablePresenter) {
 
-        this.mainActivity = timetablePresenter.getMainActivity();
+        this.mainView = timetablePresenter.getMainView();
         this.timetableManager = timetablePresenter.getTimetableManager();
     }
 
     @Override
     protected void onPreExecute() {
 
-        mainActivity.lockSaveSwitch();
+        mainView.lockSaveSwitch();
 
-        Fragment fragment =
-                mainActivity.getMyFragmentManager().findFragmentById(R.id.fragment_container);
+        if (mainView.timetableFragmentExists()) {
 
-        if (fragment instanceof TimetableFragment) {
+            Fragment fragment =
+                    mainView.getCurrentFragment();
 
             listName = ((TimetableFragment) fragment).getListName();
             type = ((TimetableFragment) fragment).getTimetableType();
@@ -62,10 +62,10 @@ final class OfflineTimetableDeleter extends AsyncTask<Void, Void, Boolean> {
 
         if (!bool) {
 
-            mainActivity.showSingleLongToastByStringId(R.string.msg_no_timetable_to_delete);
-            mainActivity.setSaveSwitchCheckedWithoutEvent(true);
+            mainView.showSingleLongToast(R.string.msg_no_timetable_to_delete);
+            mainView.setSaveSwitchCheckedWithoutEvent(true);
         }
 
-        mainActivity.unlockSaveSwitch();
+        mainView.unlockSaveSwitch();
     }
 }

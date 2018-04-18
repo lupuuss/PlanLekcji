@@ -4,15 +4,15 @@ import android.support.annotation.NonNull;
 
 public class UserMessageException extends Exception {
 
-    private String userMessage;
+    private int userMessageId;
 
-    public UserMessageException(@NonNull String userMessage, @NonNull String message) {
+    public UserMessageException(int userMessageId, @NonNull String message) {
 
         super(message);
-        this.userMessage = userMessage;
+        this.userMessageId = userMessageId;
     }
 
-    public String getUserMessage() {
-        return userMessage;
+    public int getUserMessageId() {
+        return userMessageId;
     }
 }

@@ -1,11 +1,11 @@
 package ga.lupuss.planlekcji.exceptions;
 
-import android.support.annotation.NonNull;
+import ga.lupuss.planlekcji.R;
 
 public class JsonParserException extends UserMessageException {
 
-    public JsonParserException(@NonNull String userMessage) {
+    public JsonParserException() {
 
-        super(userMessage, "Json parsing error");
+        super(R.string.msg_json_error, "Json parsing error");
     }
 }

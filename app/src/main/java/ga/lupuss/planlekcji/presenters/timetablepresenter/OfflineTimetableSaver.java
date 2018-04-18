@@ -8,7 +8,7 @@ import android.util.Log;
 import ga.lupuss.planlekcji.R;
 import ga.lupuss.planlekcji.managers.timetablemanager.TimetableManager;
 import ga.lupuss.planlekcji.managers.timetablemanager.TimetableType;
-import ga.lupuss.planlekcji.ui.activities.MainActivityInterface;
+import ga.lupuss.planlekcji.ui.activities.MainView;
 import ga.lupuss.planlekcji.ui.fragments.TimetableFragment;
 
 final class OfflineTimetableSaver extends AsyncTask<Void, Void, Integer> {
@@ -23,24 +23,23 @@ final class OfflineTimetableSaver extends AsyncTask<Void, Void, Integer> {
     private final int CAN_NOT_SAVE = 1;
     private final int OK = 2;
 
-    private final MainActivityInterface mainActivity;
+    private final MainView mainView;
     private final TimetableManager timetableManager;
 
     OfflineTimetableSaver(@NonNull TimetablePresenter timetablePresenter) {
 
-        this.mainActivity = timetablePresenter.getMainActivity();
+        this.mainView = timetablePresenter.getMainView();
         this.timetableManager = timetablePresenter.getTimetableManager();
     }
 
     @Override
     protected void onPreExecute() {
 
-        mainActivity.lockSaveSwitch();
+        mainView.lockSaveSwitch();
 
-        Fragment fragment =
-                mainActivity.getMyFragmentManager().findFragmentById(R.id.fragment_container);
+        if (mainView.timetableFragmentExists()) {
 
-        if (fragment instanceof TimetableFragment) {
+            Fragment fragment = mainView.getCurrentFragment();
 
             listName = ((TimetableFragment) fragment).getListName();
             json = ((TimetableFragment) fragment).getJson().toString();
@@ -72,25 +71,25 @@ final class OfflineTimetableSaver extends AsyncTask<Void, Void, Integer> {
 
         if (integer != OK) {
 
-            String msg;
+            Integer msgId;
 
             if (integer == NO_TT_TO_SAVE) {
 
-                msg = mainActivity.getStringByInterface(R.string.msg_no_timetable_to_save);
+                msgId = R.string.msg_no_timetable_to_save;
 
             } else {
 
-                msg = mainActivity.getStringByInterface(R.string.msg_can_not_save_timetable);
+                msgId = R.string.msg_can_not_save_timetable;
             }
 
-            mainActivity.showSingleLongToast(msg);
+            mainView.showSingleLongToast(msgId);
 
-            mainActivity.setSaveSwitchCheckedWithoutEvent(false);
+            mainView.setSaveSwitchCheckedWithoutEvent(false);
         }
 
         Log.i(OfflineTimetableSaver.class.getName(),
                 "timetableExist: " + timetableExist + " saved: " + (integer == OK));
 
-        mainActivity.unlockSaveSwitch();
+        mainView.unlockSaveSwitch();
     }
 }

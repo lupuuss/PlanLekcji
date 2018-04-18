@@ -14,6 +14,7 @@ public final  class Info {
     public final static String API_URL = "url to API here";
     private final static char[] apiAuth = "login:password".toCharArray();
     public static File APP_FILES_DIR;
+    public final static long MAX_DIFF = 2 * 60 * 60 * 1000;
 
     public static String getAuthorization(){
 

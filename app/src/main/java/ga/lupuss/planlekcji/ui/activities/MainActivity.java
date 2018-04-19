@@ -49,6 +49,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import ga.lupuss.planlekcji.BuildConfig;
 import ga.lupuss.planlekcji.managers.timetablemanager.TimetableStats;
 import ga.lupuss.planlekcji.presenters.AppUpdatePresenter;
@@ -82,17 +84,19 @@ public final class MainActivity extends AppCompatActivity implements MainView, R
 
     //LAYOUT
 
-    private DrawerLayout drawerLayout;
-    private ExpandableListView expandableListView;
-    private  SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
+    @BindView(R.id.left_drawer) ExpandableListView expandableListView;
+    @BindView(R.id.swiperefresh) SwipeRefreshLayout swipeRefreshLayout;
+
     private int lastExpandableListViewGroup = -1;
 
     //  TOOLBAR
 
     private ActionBarDrawerToggle drawerToggle;
-    private SwitchCompat saveSwitch;
-    private LinearLayout modeIndicator;
-    private ProgressBar updateProgressBar;
+
+    @BindView(R.id.save_switch) SwitchCompat saveSwitch;
+    @BindView(R.id.mode_indicator) LinearLayout modeIndicator;
+    @BindView(R.id.update_progress_bar) ProgressBar updateProgressBar;
 
     public enum IndicatorMode {
         NO_NET, NET, OFFLINE
@@ -100,7 +104,7 @@ public final class MainActivity extends AppCompatActivity implements MainView, R
 
     //Title label
 
-    private TextView title;
+    @BindView(R.id.main_title) TextView title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +122,7 @@ public final class MainActivity extends AppCompatActivity implements MainView, R
 
         setContentView(R.layout.activity_main);
 
+        ButterKnife.bind(this);
         initFields();
 
         final boolean listsRestored;
@@ -167,26 +172,12 @@ public final class MainActivity extends AppCompatActivity implements MainView, R
 
     @SuppressLint("InflateParams")
     private void initFields() {
-
-        drawerLayout = findViewById(R.id.drawer_layout);
-
-        title = findViewById(R.id.main_title);
-
-        saveSwitch = findViewById(R.id.save_switch);
+        setExpandableListViewOnClicks();
+        setModeIndicatorByInternetConnection();
+        setSwipeRefreshListener();
+        toolbarInit();
         lockSaveSwitch();
         setSaveSwitchListener(false);
-
-        expandableListView = findViewById(R.id.left_drawer);
-        setExpandableListViewOnClicks();
-
-        modeIndicator = findViewById(R.id.mode_indicator);
-        setModeIndicatorByInternetConnection();
-
-        swipeRefreshLayout = findViewById(R.id.swiperefresh);
-        setSwipeRefreshListener();
-
-        updateProgressBar = findViewById(R.id.update_progress_bar);
-        toolbarInit();
     }
 
     private void setSwipeRefreshListener() {

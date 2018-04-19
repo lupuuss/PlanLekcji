@@ -24,6 +24,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import ga.lupuss.planlekcji.ui.adapters.BasicViewPagerAdapter;
 import ga.lupuss.planlekcji.statics.Bundles;
 import ga.lupuss.planlekcji.ui.activities.MainActivity;
@@ -41,10 +44,13 @@ public final class TimetableFragment extends Fragment {
     private boolean fromOfflineSource;
     private TimetableChooser timetableChooser;
 
-    private ViewPager viewPager;
-    private FrameLayout footer;
+    @BindView(R.id.pager) ViewPager viewPager;
+    @BindView(R.id.tabs) TabLayout tabLayout;
+    @BindView(R.id.layout_footer) FrameLayout footer;
 
     private List<Integer> lessonsPerDay;
+
+    private Unbinder unbinder;
 
 
     @Override
@@ -97,10 +103,11 @@ public final class TimetableFragment extends Fragment {
 
         LinearLayout linearLayout = (LinearLayout) inflater.inflate(R.layout.fragment_timetable, container, false);
 
+        unbinder = ButterKnife.bind(this, linearLayout);
+
         timetableChooser = new TimetableChooser(((MainActivity)getActivity()).getTimetablePresenter().getHoursList());
         lessonsPerDay = lessonsCount(json);
 
-        viewPager = linearLayout.findViewById(R.id.pager);
         viewPager.setAdapter(
                 new BasicViewPagerAdapter(getChildFragmentManager(), json, type)
         );
@@ -108,10 +115,7 @@ public final class TimetableFragment extends Fragment {
 
         adjustViewPagerToSwipeRefresh(viewPager);
 
-        TabLayout tabLayout = linearLayout.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
-
-        footer = linearLayout.findViewById(R.id.layout_footer);
 
         if (!setLastUpdate(footer)) {
 
@@ -207,6 +211,12 @@ public final class TimetableFragment extends Fragment {
         refreshMainActivity();
         setCurrentPageIfNeeded();
         showLastUpdateFooterIfNeeded();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     private void showLastUpdateFooterIfNeeded() {

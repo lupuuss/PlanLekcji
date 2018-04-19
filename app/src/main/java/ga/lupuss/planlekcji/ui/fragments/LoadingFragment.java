@@ -6,12 +6,16 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import ga.lupuss.planlekcji.presenters.timetablepresenter.LoadMode;
 import ga.lupuss.planlekcji.presenters.timetablepresenter.Principal;
 import ga.lupuss.planlekcji.tools.AntiSpam;
@@ -23,10 +27,12 @@ import ga.lupuss.planlekcji.managers.timetablemanager.TimetableType;
 public final class LoadingFragment extends Fragment {
 
     private boolean isOffline;
-    private Button loadOffline;
+    @BindView(R.id.load_offline_button) Button loadOffline;
     private AntiSpam antiSpam = new AntiSpam();
 
     private Handler handler = new Handler();
+
+    private Unbinder unbinder;
 
     public enum Owner {
 
@@ -41,7 +47,7 @@ public final class LoadingFragment extends Fragment {
 
         savedInstanceState = getArguments();
 
-        loadOffline = layout.findViewById(R.id.load_offline);
+        unbinder = ButterKnife.bind(this, layout);
 
         isOffline = savedInstanceState.getBoolean(Bundles.IS_OFFLINE_TO_LOADING_SCREEN);
         setOwner(Owner.valueOf(savedInstanceState.getString(Bundles.LOADING_OWNER)));
@@ -70,6 +76,12 @@ public final class LoadingFragment extends Fragment {
         loadOffline.setVisibility(View.INVISIBLE);
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
+
     public final void setOfflineButtonIf(boolean offline) {
 
         isOffline = offline;
@@ -80,7 +92,11 @@ public final class LoadingFragment extends Fragment {
 
             if (offline && loadOffline.getVisibility() == View.INVISIBLE) {
 
-                handler.postDelayed(() -> loadOffline.setVisibility(View.VISIBLE), 1500);
+                handler.postDelayed(() -> {
+
+                    if (loadOffline != null) loadOffline.setVisibility(View.VISIBLE);
+
+                }, 1500);
 
             } else if(!offline) {
 

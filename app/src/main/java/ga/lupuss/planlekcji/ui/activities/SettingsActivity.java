@@ -61,7 +61,6 @@ public final class SettingsActivity extends AppCompatPreferenceActivity {
                         case 4:
                             toast("No serio idź sobie :/");
                             break;
-
                     }
                 }
 

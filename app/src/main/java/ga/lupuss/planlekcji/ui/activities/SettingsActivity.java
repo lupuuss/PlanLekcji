@@ -58,9 +58,27 @@ public final class SettingsActivity extends AppCompatPreferenceActivity {
                         case 2:
                             toast("Nie zostaniesz tutaj programistą :(");
                             break;
+
                         case 4:
                             toast("No serio idź sobie :/");
                             break;
+
+                        case 6:
+                            toast("Odwal się!");
+                            break;
+
+                        case 8:
+                            toast("NIC TAM NIE MA");
+                            break;
+
+                        case 10:
+                            toast("Nie ma dowodów na to, że Hitler wiedział o Holocauście...");
+                            break;
+
+                        case 12:
+                            toast("Tylko rasowo czysta Europa");
+                            break;
+
                     }
                 }
 
